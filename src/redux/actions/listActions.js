@@ -1,6 +1,6 @@
 // actions/listsActions.js
 
-import { fetchListas } from '../../service/user';
+import { fetchListas } from '../../api/user';
 
 export const setLists = (userId) => {
   return async (dispatch) => {

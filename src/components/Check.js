@@ -1,115 +1,108 @@
 import React from 'react';
-import { Button, Typography, Paper, Container } from '@mui/material';
-import { styled } from '@mui/system';  // Importação atualizada
+import { Box, Typography, Button } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 
 const Check = ({ price, quantity }) => {
-
-  const classes = useStyles();
-  const navigation = useNavigate();
-
+  const navigate = useNavigate();
   const priceConverted = parseFloat(price);
 
-  console.log("BORA CHECKKKKKKK");
+  const handleFinishOrder = () => {
+    navigate('/Home');
+  };
 
   return (
-    <Container className={classes.container}>
-      <Paper className={classes.card}>
-        <div className={classes.content}>
-          <div className={classes.detailsOrder}>
-            <Typography className={classes.name} variant="h6">
+    <Box sx={styles.container}>
+      <Box sx={styles.card}>
+        <Box sx={styles.content}>
+          <Box sx={styles.detailsOrder}>
+            <Typography variant="h6" fontWeight="bold" marginBottom="20px">
               Informe seu nome
             </Typography>
-            <Typography className={classes.span} variant="h4">
+            <Typography sx={styles.span} variant="h6">
               Samara Silvia
             </Typography>
-          </div>
-          <div className={classes.tagContainer}>
-            <Typography className={classes.tagText} variant="h5">
+          </Box>
+          <Box sx={styles.tagContainer}>
+            <Typography sx={styles.tagText} variant="h6">
               Preço: R$ {priceConverted * quantity}
             </Typography>
-          </div>
-        </div>
-        <div className={classes.actions}>
+          </Box>
+        </Box>
+        <Box sx={styles.actions}>
           <Button
             variant="contained"
-            className={classes.confirm}
-            onClick={() => navigation.push('/home')}
+            sx={styles.confirm}
+            onClick={handleFinishOrder}
           >
             Finalizar Pedido
           </Button>
-        </div>
-      </Paper>
-      <div className={classes.lineBottom} />
-    </Container>
+        </Box>
+      </Box>
+      <Box sx={styles.lineBottom} />
+    </Box>
   );
 };
 
-const useStyles = styled((theme) => ({
+const styles = {
   container: {
-    padding: theme.spacing(5),
     display: 'flex',
     flexDirection: 'column',
+    justifyContent: 'center',
     alignItems: 'center',
+    padding: '5px',
   },
   card: {
-    marginTop: theme.spacing(3),
-    padding: theme.spacing(3),
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
+    marginTop: '30px',
+    position: 'relative',
   },
   content: {
     alignItems: 'center',
-  },
-  detailsOrder: {
-    marginBottom: theme.spacing(5),
     textAlign: 'center',
   },
-  name: {
-    fontWeight: 'bold',
-    marginBottom: theme.spacing(2),
+  detailsOrder: {
+    marginBottom: '50px',
   },
   span: {
-    border: '1px solid #000',
-    padding: theme.spacing(0.5),
-    marginLeft: theme.spacing(1),
+    borderWidth: '1px',
+    borderColor: '#000',
+    padding: '2px',
+    marginLeft: '5px',
   },
   tagContainer: {
-    display: 'flex',
+    flexDirection: 'row',
     justifyContent: 'center',
     backgroundColor: '#F2F2F2',
-    borderRadius: theme.spacing(2),
-    padding: theme.spacing(3),
-    margin: theme.spacing(1),
+    borderRadius: '20px',
+    padding: '15px',
+    margin: '5px',
   },
   tagText: {
     textAlign: 'center',
   },
   lineBottom: {
     position: 'absolute',
-    bottom: 0,
+    bottom: '0',
     width: '120%',
-    height: theme.spacing(20),
+    height: '160px',
     backgroundColor: '#23232e',
     zIndex: -1,
   },
   actions: {
     position: 'absolute',
     top: '180%',
-    left: '50%',
-    transform: 'translateX(-50%)',
-    borderRadius: theme.spacing(4),
+    left: '100px',
+    borderRadius: '40px',
     justifyContent: 'center',
     alignItems: 'center',
-    boxShadow: theme.shadows[5],
+    boxShadow: '0px 2px 2px rgba(0, 0, 0, 0.25)',
   },
   confirm: {
-    width: '100%',
-    borderRadius: theme.spacing(4),
-    padding: theme.spacing(2),
+    width: '120%',
+    borderRadius: '40px',
+    justifyContent: 'center',
+    alignItems: 'center',
     backgroundColor: '#C0AA4D',
   },
-}));
+};
 
 export default Check;

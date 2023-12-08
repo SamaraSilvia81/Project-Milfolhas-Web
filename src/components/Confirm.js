@@ -1,157 +1,132 @@
 import React, { useState } from 'react';
-import { Button, Typography, Paper, Container, Avatar } from '@mui/material';
-import { styled } from '@mui/system';  // Importação atualizada
-import { useNavigate  } from 'react-router-dom';
-import { ConfirmationNumberSharp } from '@material-ui/icons';
+import { Box, Button, Typography } from '@mui/material';
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import { useNavigate, useParams } from 'react-router-dom';
 
 const Confirm = ({ food }) => {
-
-  const classes = useStyles();
-  const navigation = useNavigate();
-
   const [isButtonPressed, setIsButtonPressed] = useState(false);
+  const navigate = useNavigate();
 
   const handleCardPress = () => {
-
     setIsButtonPressed((prevState) => !prevState);
-    console.log("BORA PAGARRRRR");
-
-    navigation.push('/check', {
-      value: food.value,
-      quantity: food.quantity,
-    });
+    navigate('/Fake');
   };
 
   return (
-    <Container className={classes.container}>
-      <Paper className={classes.card}>
-        <div className={classes.content}>
-          <div className={classes.avatarContainer}>
-            <Avatar src={food.image} alt={food.foodname} sx={{ width: 350, height: 250 }} />
-          </div>
-          <div className={classes.detailsOrder}>
-            <Typography className={classes.quantity} variant="h6">
+    <Box sx={styles.container}>
+      <Box sx={styles.card}>
+        <Box sx={styles.content}>
+          <Box sx={styles.avatarContainer}>
+            <img src={food.image} alt="Food Image" style={styles.image} />
+          </Box>
+          <Box sx={styles.detailsOrder}>
+            <Typography variant="h5" sx={styles.quantity}>
               Quantidade: {food.quantity}
             </Typography>
-            <Typography className={classes.name} variant="h6">
-              Prato: {food.foodname}
+            <Typography variant="h5" sx={styles.name}>
+              Prato: {food.name}
             </Typography>
-          </div>
-          <div className={classes.tagContainer}>
-            <Typography className={classes.tagText} variant="h5">
-              Preço: R$ {food.value}
+          </Box>
+          <Box sx={styles.tagContainer}>
+            <Typography variant="h5" sx={styles.tagText}>
+              Preço: R$ {parseInt(food.value) * food.quantity}
             </Typography>
-          </div>
-        </div>
-        <div className={classes.actions}>
-          <Button
-            variant="contained"
-            className={classes.confirm}
-            onClick={handleCardPress}
-          >
+          </Box>
+        </Box>
+        <Box sx={styles.actionsContainer}>
+          <Button variant="contained" sx={styles.confirm} onClick={handleCardPress}>
             Confirmar Pedido
           </Button>
-        </div>
-        <div className={classes.actions2}>
           <Button
             variant="contained"
-            className={classes.cancel}
-            onClick={() => navigation.push('/home')}
+            sx={styles.cancel}
+            onClick={() => navigate('/Home')}
           >
             Cancelar Pedido
           </Button>
-        </div>
-      </Paper>
-      <div className={classes.lineBottom} />
-    </Container>
+        </Box>
+      </Box>
+      <Box sx={styles.lineBottom} />
+    </Box>
   );
 };
 
-const useStyles = styled((theme) => ({
+const styles = {
   container: {
-    padding: theme.spacing(5),
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
+    backgroundColor: '#fcfcfc',
+    minHeight: '100vh',
   },
   card: {
-    marginTop: theme.spacing(3),
-    padding: theme.spacing(3),
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
+    marginTop: 15,
+    position: 'relative',
+    width: 320,
   },
   content: {
     alignItems: 'center',
+    padding: '20px',
   },
   avatarContainer: {
-    marginBottom: theme.spacing(5),
+    marginBottom: 5,
+  },
+  image: {
+    width: 350,
+    height: 250,
   },
   detailsOrder: {
-    marginTop: theme.spacing(2),
-    marginBottom: theme.spacing(4),
-    textAlign: 'justify',
+    marginTop: 20,
   },
   name: {
-    fontSize: theme.typography.h6.fontSize,
+    fontSize: 20,
     fontWeight: 'bold',
   },
   quantity: {
-    fontSize: theme.typography.h6.fontSize,
-    marginBottom: theme.spacing(2),
+    fontSize: 20,
+    marginBottom: 20,
   },
   tagContainer: {
-    display: 'flex',
+    flexDirection: 'row',
     justifyContent: 'center',
     backgroundColor: '#F2F2F2',
-    borderRadius: theme.spacing(2),
-    padding: theme.spacing(3),
-    margin: theme.spacing(1),
+    borderRadius: 20,
+    padding: '15px 20px',
+    margin: '0 5px',
   },
   tagText: {
-    fontSize: theme.typography.h5.fontSize,
+    fontSize: 16,
     textAlign: 'center',
   },
   lineBottom: {
     position: 'absolute',
     bottom: 0,
-    width: '120%',
-    height: theme.spacing(20),
+    width: '100%',
+    height: 160,
     backgroundColor: '#23232e',
     zIndex: -1,
   },
-  actions: {
+  actionsContainer: {
+    display: 'flex',
+    justifyContent: 'space-between',
     position: 'absolute',
     top: '115%',
-    right: theme.spacing(-2),
-    borderRadius: theme.spacing(4),
-    justifyContent: 'center',
-    alignItems: 'center',
-    boxShadow: theme.shadows[5],
-  },
-  actions2: {
-    position: 'absolute',
-    top: '115%',
-    left: theme.spacing(-2),
-    borderRadius: theme.spacing(4),
-    justifyContent: 'center',
-    alignItems: 'center',
-    boxShadow: theme.shadows[5],
+    left: 0,
+    right: 0,
+    padding: '0 20px',
   },
   confirm: {
-    width: '100%',
-    borderRadius: theme.spacing(4),
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: "#C0AA4D",
+    flex: 1,
+    marginRight: '10px',
+    borderRadius: 40,
+    backgroundColor: '#C0AA4D',
   },
   cancel: {
-    width: '100%',
-    borderRadius: theme.spacing(4),
-    justifyContent: 'center',
-    alignItems: 'center',
+    flex: 1,
+    borderRadius: 40,
     backgroundColor: '#2A234B',
   },
-}));
+};
 
 export default Confirm;

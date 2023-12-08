@@ -1,29 +1,23 @@
 import React, { useState } from 'react';
-import { Button, Typography, Paper, Container, Avatar, IconButton } from '@mui/material';
-import Icon from '@mui/icons-material/ShoppingCart';
-import { styled } from '@mui/system';  // Importação atualizada
-import { useNavigate } from 'react-router-dom';
+import { Avatar, Button, Typography } from '@mui/material';
+import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+import { useNavigate, useParams } from 'react-router-dom';
 
-export const Order = ({ food }) => {
-
-  const classes = useStyles();
+const Order = () => {
   const [isButtonPressed, setIsButtonPressed] = useState(false);
   const [counter, setCounter] = useState(0);
-  
-  const navigation = useNavigate();
+  const navigate = useNavigate();
+  const { food } = useParams();
+
+  const serializedFood = decodeURIComponent(food);
+  const selectedFood = JSON.parse(serializedFood);
 
   const handleCardPress = () => {
     setIsButtonPressed((prevState) => !prevState);
+    selectedFood.quantity = counter;
+    const serializedFood = JSON.stringify(selectedFood);
 
-    const selectedFood = {
-      objectId: food.id,
-      foodname: food.name,
-      value: food.value,
-      image: food.image,
-      quantity: counter,
-    };
-
-    navigation.navigate('Confirm', { selectedFood });
+    navigate(`/Confirm/${encodeURIComponent(serializedFood)}`);
   };
 
   const increment = () => {
@@ -37,188 +31,169 @@ export const Order = ({ food }) => {
   };
 
   return (
-    <Container className={classes.container}>
-      <Paper className={classes.card}>
-        <div className={classes.content}>
-          <div className={classes.avatarContainer}>
-            <Avatar alt={food.name} src={food.image} sx={{ width: 220, height: 220 }} />
+    <div style={styles.container}>
+      <div style={styles.card}>
+        <div style={styles.content}>
+          <div style={styles.avatarContainer}>
+            <Avatar alt="Food Image" src={selectedFood.image} sx={{ width: 220, height: 220 }} />
           </div>
-          <div className={classes.detailsContainer}>
-            <div className={classes.nameContainer}>
-              <Typography variant="h5" className={classes.name}>
-                {food.name}
+          <div style={styles.detailsContainer}>
+            <div style={styles.nameContainer}>
+              <Typography variant="h4" sx={styles.name}>
+                {selectedFood.name}
               </Typography>
             </div>
-            <div className={classes.descriptionContainer}>
-              <Typography variant="h6" className={classes.descriptionTitle}>
-                Ingredientes
-              </Typography>
-              {/* <Typography className={classes.description}>{food.about}</Typography> */}
-              <Typography className={classes.tagText}>asdjkasdijewjj</Typography>
-            </div>
           </div>
-          <div className={classes.tagContainer}>
-            <div className={classes.tagItem}>
-              <Typography variant="h5" className={classes.tagText}>
-                Preço: R${food.value}
+          <div style={styles.tagContainer}>
+            <div style={styles.tagItem}>
+              <Typography variant="h5" sx={styles.tagText}>
+                Preço: R${selectedFood.value}
               </Typography>
             </div>
           </div>
         </div>
-        <div className={classes.order}>
-          <Typography className={classes.text}>Quantidade do Pedido</Typography>
-          <div className={classes.quantity}>
-            <Button className={classes.minus} variant="contained" onClick={decrement}>
+        <div style={styles.order}>
+          <Typography variant="h6" sx={styles.text}>
+            Quantidade do Pedido
+          </Typography>
+          <div style={styles.quantity}>
+            <Button variant="contained" sx={styles.minus} onClick={decrement}>
               -
             </Button>
-            <Typography className={classes.result}>{counter}</Typography>
-            <Button className={classes.push} variant="contained" onClick={increment}>
+            <Typography variant="h6" sx={styles.result}>
+              {counter}
+            </Typography>
+            <Button variant="contained" sx={styles.push} onClick={increment}>
               +
             </Button>
           </div>
         </div>
-        <div className={classes.actions}>
-          <IconButton
-            className={`${classes.button} ${isButtonPressed && classes.buttonPressed}`}
+        <div style={styles.actions}>
+          <Button
+            variant="contained"
+            sx={[styles.button, isButtonPressed && styles.buttonPressed]}
             onClick={handleCardPress}
           >
-            <Icon fontSize="large" color="white" />
-          </IconButton>
+            <ShoppingCartIcon style={{ fontSize: 20, color: 'white' }} />
+          </Button>
         </div>
-      </Paper>
-      <div className={classes.lineBottom} />
-    </Container>
+      </div>
+      <div style={styles.lineBottom} />
+    </div>
   );
 };
 
-const useStyles = styled((theme) => ({
+const styles = {
   container: {
-    flex: 1,
-    padding: theme.spacing(5),
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
+    // flex: 1,
+    // padding: 5,
+    // justifyContent: 'center',
+    // alignItems: 'center',
   },
   card: {
-    marginTop: theme.spacing(3),
-    padding: theme.spacing(3),
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
+    // marginTop: 30,
   },
   content: {
-    alignItems: 'center',
-    position: 'relative',
+    // alignItems: 'center',
   },
   avatarContainer: {
-    position: 'absolute',
-    top: -90,
-    right: '60%',
-    alignItems: 'center',
+    // position: 'absolute',
+    // top: -90,
+    // right: '60%',
+    // alignItems: 'center',
   },
   detailsContainer: {
-    marginTop: 120,
-    width: '100%',
-    textAlign: 'justify',
+    // marginTop: 120,
+    // width: '100%',
+    // textAlign: 'justify',
   },
   nameContainer: {
-    position: 'absolute',
-    top: -120,
-    left: '60%',
-    width: '50%',
+    // position: 'absolute',
+    // top: -120,
+    // left: '60%',
+    // width: '50%',
   },
   name: {
-    fontSize: theme.typography.h5.fontSize,
-    fontWeight: 'bold',
-    marginBottom: theme.spacing(1),
-    textAlign: 'center',
+    // fontSize: 20,
+    // fontWeight: 'bold',
+    // marginBottom: 5,
+    // textAlign: 'center',
   },
   descriptionContainer: {
-    marginVertical: theme.spacing(2),
-  },
-  descriptionTitle: {
-    fontSize: theme.typography.h6.fontSize,
-    fontWeight: 'bold',
-    marginBottom: theme.spacing(1),
-    textAlign: 'justify',
-  },
-  description: {
-    fontSize: theme.typography.h6.fontSize,
-    textAlign: 'justify',
+    // marginVertical: 50,
+    // Adicione estilo conforme necessário
   },
   tagContainer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
+    // flexDirection: 'row',
+    // justifyContent: 'center',
   },
   tagItem: {
-    backgroundColor: '#F2F2F2',
-    borderRadius: theme.spacing(2),
-    padding: theme.spacing(3),
-    margin: theme.spacing(1),
+    // backgroundColor: '#F2F2F2',
+    // borderRadius: 20,
+    // paddingHorizontal: 20,
+    // paddingVertical: 15,
+    // marginHorizontal: 5,
   },
   tagText: {
-    fontSize: theme.typography.h5.fontSize,
-    textAlign: 'center',
+    // fontSize: 16,
+    // textAlign: 'center',
   },
   lineBottom: {
-    position: 'absolute',
-    bottom: 0,
-    width: '120%',
-    height: theme.spacing(20),
-    backgroundColor: '#23232e',
-    zIndex: -1,
+    // position: 'absolute',
+    // bottom: 0,
+    // width: '120%',
+    // height: 160,
+    // backgroundColor: '#23232e',
+    // zIndex: -1,
   },
   order: {
-    position: 'absolute',
-    top: '116%',
+    // position: 'absolute',
+    // top: '116%',
   },
   quantity: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    flexDirection: 'row',
+    // justifyContent: 'center',
+    // alignItems: 'center',
+    // flexDirection: 'row',
   },
   push: {
-    backgroundColor: 'transparent',
+    // backgroundColor: 'transparent',
   },
   minus: {
-    backgroundColor: 'transparent',
+    // backgroundColor: 'transparent',
   },
   text: {
-    textAlign: 'center',
-    color: '#fff',
-    marginBottom: theme.spacing(1),
+    // textAlign: 'center',
+    // color: '#fff',
+    // marginBottom: 15,
   },
   result: {
-    textAlign: 'center',
-    color: '#fff',
-    marginTop: theme.spacing(1),
-    marginHorizontal: theme.spacing(2),
-    fontSize: theme.typography.h5.fontSize,
+    // textAlign: 'center',
+    // color: '#fff',
+    // marginTop: 10,
+    // marginHorizontal: 10,
   },
   actions: {
-    position: 'absolute',
-    top: '100%',
-    right: -theme.spacing(5),
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: theme.spacing(4),
-    width: theme.spacing(10),
-    height: theme.spacing(10),
-    boxShadow: theme.shadows[5],
-    backgroundColor: theme.palette.primary.main,
+    // position: 'absolute',
+    // top: '100%',
+    // right: -50,
+    // justifyContent: 'center',
+    // alignItems: 'center',
+    // borderRadius: 40,
+    // width: 80,
+    // height: 80,
+    // boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.25)',
   },
   button: {
-    width: theme.spacing(10),
-    height: theme.spacing(10),
-    borderRadius: theme.spacing(5),
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: theme.palette.secondary.main,
-    color: 'white',
+    // width: 80,
+    // height: 80,
+    // borderRadius: 40,
+    // justifyContent: 'center',
+    // alignItems: 'center',
+    // backgroundColor: '#C0AA4D',
   },
   buttonPressed: {
-    backgroundColor: theme.palette.info.main,
+    // backgroundColor: '#2A234B',
   },
-}));
+};
 
 export default Order;

@@ -1,51 +1,24 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
-import { makeStyles, Card, CardContent, Typography, CardActionArea } from '@mui/material';
+import { Card, CardContent, CardMedia, Typography, Button } from '@mui/material';
 
-const Breakfast = ({ breakfast }) => {
-  
-  const classes = useStyles();
+const Breakfast = ({ breakfast, onPress }) => {
+  const handlePress = () => {
+    onPress(breakfast);
+  };
 
   return (
-    <Link to={`/breakfast/${breakfast.id}`} style={{ textDecoration: 'none' }}>
-      <Card className={classes.item}>
-        <CardActionArea>
-          <div className={classes.card}>
-            <CardContent>
-              <div className={classes.textContainer}>
-                <Typography variant="h5" className={classes.titleItem}>
-                  {breakfast.name}
-                </Typography>
-              </div>
-            </CardContent>
-          </div>
-        </CardActionArea>
-      </Card>
-    </Link>
+    <Card sx={{ width: '250px', margin: '10px' }}>
+      <CardMedia component="img" alt={breakfast.name} height="140" image={breakfast.image} />
+      <CardContent>
+        <Typography variant="h6" component="div" sx={{ marginBottom: '10px' }}>
+          {breakfast.name}
+        </Typography>
+        <Button onClick={handlePress} variant="contained" color="primary">
+          Ver Detalhes
+        </Button>
+      </CardContent>
+    </Card>
   );
 };
-
-const useStyles = makeStyles({
-  item: {
-    flex: 1,
-    borderRadius: 10,
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  card: {
-    width: "100%",
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-  },
-  titleItem: {
-    marginBottom: 10,
-    textAlign: 'center',
-    color: '#fff',
-  },
-  textContainer: {
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-});
 
 export default Breakfast;

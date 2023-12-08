@@ -8,7 +8,6 @@ const instance = axios.create({
 export const fetchListas = async (userId) => {
   try {
     const response = await instance.get(`/user/${userId}/lists`);
-    console.log("listasBreak", response)
     return response.data;
   } catch (error) {
     console.error(error);
