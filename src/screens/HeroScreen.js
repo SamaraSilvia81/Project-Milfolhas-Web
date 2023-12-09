@@ -2,7 +2,7 @@ import React from 'react';
 import { Button, Container, CssBaseline, Typography, Box } from '@mui/material';
 import { Link } from 'react-router-dom';
 
-// import logo from '../../public/logo.png'; // Importe sua imagem corretamente
+import logo from '../assets/logo.png'; // Importe sua imagem corretamente
 
 function HeroScreen() {
   return (
@@ -16,7 +16,7 @@ function HeroScreen() {
           marginTop: 8,
         }}
       >
-        {/* <img src={logo} alt="Logo" style={{ width: 350, height: 350 }} /> */}
+        <img src={logo} alt="Logo" style={{ width: 350, height: 350, marginTop:5 }} />
         <Box
           component="form"
           noValidate

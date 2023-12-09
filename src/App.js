@@ -35,12 +35,12 @@ function App() {
 					path="/Breakfast/:listId/:mealName"
 					element={<BreakfastScreen />}
 				/>
-				<Route
+				{/* <Route
 					path="/Food/:breakfastName/:breakfastId"
 					element={<FoodScreen />}
-				/>
+				/> */}
 				<Route
-					path="/Order/:food"
+					path="/Order/:foodId"
 					element={<OrderScreen />}
 				/>
 				<Route

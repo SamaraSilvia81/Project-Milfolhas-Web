@@ -95,11 +95,11 @@ const LoginScreen = () => {
                 type="button"
                 fullWidth
                 variant="contained"
-                sx={{ mt: 3, mb: 2 }}
+                sx={{ mt: 3, mb: 2, height: '40px'}}
                 style={{ backgroundColor: '#f90636' }}
                 onClick={handleLogin}
               >
-                Sign In
+                Entrar
               </Button>
             </Box>
           </Box>

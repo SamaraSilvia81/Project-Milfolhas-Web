@@ -4,20 +4,27 @@ import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import { useNavigate, useParams } from 'react-router-dom';
 
 const Order = () => {
+  
   const [isButtonPressed, setIsButtonPressed] = useState(false);
   const [counter, setCounter] = useState(0);
   const navigate = useNavigate();
-  const { food } = useParams();
 
-  const serializedFood = decodeURIComponent(food);
-  const selectedFood = JSON.parse(serializedFood);
+  const { foodId } = useParams();
+  console.log("ORDER COMIDA", foodId)
 
   const handleCardPress = () => {
+    
     setIsButtonPressed((prevState) => !prevState);
-    selectedFood.quantity = counter;
-    const serializedFood = JSON.stringify(selectedFood);
 
-    navigate(`/Confirm/${encodeURIComponent(serializedFood)}`);
+    const selectedFood = {
+      id: foodId.id,
+      foodname: foodId.name,
+      value: foodId.value,
+      image: foodId.image,
+      quantity: counter,
+    };
+
+    navigate('Confirm', { selectedFood });
   };
 
   const increment = () => {
@@ -35,19 +42,19 @@ const Order = () => {
       <div style={styles.card}>
         <div style={styles.content}>
           <div style={styles.avatarContainer}>
-            <Avatar alt="Food Image" src={selectedFood.image} sx={{ width: 220, height: 220 }} />
+            <Avatar alt="Food Image" src={foodId.image} sx={{ width: 220, height: 220 }} />
           </div>
           <div style={styles.detailsContainer}>
             <div style={styles.nameContainer}>
               <Typography variant="h4" sx={styles.name}>
-                {selectedFood.name}
+                {foodId.name}
               </Typography>
             </div>
           </div>
           <div style={styles.tagContainer}>
             <div style={styles.tagItem}>
               <Typography variant="h5" sx={styles.tagText}>
-                Preço: R${selectedFood.value}
+                Preço: R${foodId.value}
               </Typography>
             </div>
           </div>
@@ -85,114 +92,114 @@ const Order = () => {
 
 const styles = {
   container: {
-    // flex: 1,
-    // padding: 5,
-    // justifyContent: 'center',
-    // alignItems: 'center',
+    flex: 1,
+    padding: 5,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   card: {
-    // marginTop: 30,
+    marginTop: 30,
   },
   content: {
-    // alignItems: 'center',
+    alignItems: 'center',
   },
   avatarContainer: {
-    // position: 'absolute',
-    // top: -90,
-    // right: '60%',
-    // alignItems: 'center',
+    position: 'absolute',
+    top: -90,
+    right: '60%',
+    alignItems: 'center',
   },
   detailsContainer: {
-    // marginTop: 120,
-    // width: '100%',
-    // textAlign: 'justify',
+    marginTop: 120,
+    width: '100%',
+    textAlign: 'justify',
   },
   nameContainer: {
-    // position: 'absolute',
-    // top: -120,
-    // left: '60%',
-    // width: '50%',
+    position: 'absolute',
+    top: -120,
+    left: '60%',
+    width: '50%',
   },
   name: {
-    // fontSize: 20,
-    // fontWeight: 'bold',
-    // marginBottom: 5,
-    // textAlign: 'center',
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 5,
+    textAlign: 'center',
   },
   descriptionContainer: {
-    // marginVertical: 50,
+    marginVertical: 50,
     // Adicione estilo conforme necessário
   },
   tagContainer: {
-    // flexDirection: 'row',
+    flexDirection: 'row',
     // justifyContent: 'center',
   },
   tagItem: {
-    // backgroundColor: '#F2F2F2',
-    // borderRadius: 20,
-    // paddingHorizontal: 20,
-    // paddingVertical: 15,
-    // marginHorizontal: 5,
+    backgroundColor: '#F2F2F2',
+    borderRadius: 20,
+    paddingHorizontal: 20,
+    paddingVertical: 15,
+    marginHorizontal: 5,
   },
   tagText: {
-    // fontSize: 16,
-    // textAlign: 'center',
+    fontSize: 16,
+    textAlign: 'center',
   },
   lineBottom: {
-    // position: 'absolute',
-    // bottom: 0,
-    // width: '120%',
-    // height: 160,
-    // backgroundColor: '#23232e',
-    // zIndex: -1,
+    position: 'absolute',
+    bottom: 0,
+    width: '120%',
+    height: 160,
+    backgroundColor: '#23232e',
+    zIndex: -1,
   },
   order: {
-    // position: 'absolute',
-    // top: '116%',
+    position: 'absolute',
+    top: '116%',
   },
   quantity: {
-    // justifyContent: 'center',
-    // alignItems: 'center',
-    // flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    flexDirection: 'row',
   },
   push: {
-    // backgroundColor: 'transparent',
+    backgroundColor: 'transparent',
   },
   minus: {
-    // backgroundColor: 'transparent',
+    backgroundColor: 'transparent',
   },
   text: {
-    // textAlign: 'center',
-    // color: '#fff',
-    // marginBottom: 15,
+    textAlign: 'center',
+    color: '#fff',
+    marginBottom: 15,
   },
   result: {
-    // textAlign: 'center',
-    // color: '#fff',
-    // marginTop: 10,
-    // marginHorizontal: 10,
+    textAlign: 'center',
+    color: '#fff',
+    marginTop: 10,
+    marginHorizontal: 10,
   },
   actions: {
-    // position: 'absolute',
-    // top: '100%',
-    // right: -50,
-    // justifyContent: 'center',
-    // alignItems: 'center',
-    // borderRadius: 40,
-    // width: 80,
-    // height: 80,
-    // boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.25)',
+    position: 'absolute',
+    top: '100%',
+    right: -50,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 40,
+    width: 80,
+    height: 80,
+    boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.25)',
   },
   button: {
-    // width: 80,
-    // height: 80,
-    // borderRadius: 40,
-    // justifyContent: 'center',
-    // alignItems: 'center',
-    // backgroundColor: '#C0AA4D',
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#C0AA4D',
   },
   buttonPressed: {
-    // backgroundColor: '#2A234B',
+    backgroundColor: '#2A234B',
   },
 };
 

@@ -8,6 +8,7 @@ import Meal from "../components/Meal";
 import { fetchListas } from "../api/meal";
 
 function HomeScreen() {
+  
   const navigate = useNavigate();
   const userId = useSelector((state) => state.auth.userId);
 
@@ -104,7 +105,16 @@ const styles = {
     fontWeight: 'bold',
   },
   mealContainer: {
-    marginTop: 2
+    marginTop: 2,
+    display: 'flex',
+    justifyContent: 'center', // Centraliza horizontalmente
+    alignItems: 'center', // Centraliza verticalmente
+  },
+  mealBox: {
+    display: 'flex',
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 4, // Reduza este valor para ajustar o espaçamento entre os cards
   },
 };
 

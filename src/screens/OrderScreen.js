@@ -4,26 +4,37 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { useSelector } from 'react-redux';
 import { useQuery } from '@tanstack/react-query';
 import { useParams, useNavigate } from 'react-router-dom';
+
 import Order from '../components/Order';
 import { fetchItemsByListId } from '../api/food';
 
 const OrderScreen = () => {
+  
   const navigate = useNavigate();
   const userId = useSelector((state) => state.auth.userId);
+
   const { foodId } = useParams();
+  console.log("order screen", foodId)
 
   const { isLoading, error, data } = useQuery({
-    queryKey: ['AppTotem', userId],
+    queryKey: ['AppTotem', userId],  // Adicione foodId aqui
     queryFn: () => fetchItemsByListId(userId, foodId),
     onError: (err) => console.error('Erro na query:', err),
-    staleTime: 10000,
-  });
+  });  
 
-  const [selectedFood, setSelectedFood] = useState(null);
+  //   const handleCardPress = (food) => {
+//     const serializedFood = JSON.stringify(food);
+//     navigate(`/Order/${encodeURIComponent(serializedFood)}`);
+//   };
 
+  const [selectedFood, setSelectedFood] = useState();
+
+  // No componente OrderScreen
   useEffect(() => {
+    console.log("Data:", data);
     if (data && data.length > 0) {
       const food = data.find((item) => item.id === foodId);
+      console.log("Selected Food:", food);
       setSelectedFood(food);
     }
   }, [data, foodId]);
@@ -49,6 +60,8 @@ const OrderScreen = () => {
     );
   }
 
+  // console.log("SELECTED ORDER: ", selectedFood)
+
   return (
     <div style={styles.container}>
       <AppBar position="static" style={styles.appBar}>
@@ -60,7 +73,11 @@ const OrderScreen = () => {
         </Toolbar>
       </AppBar>
       <Paper elevation={3} style={styles.paper}>
-        <Order food={selectedFood} />
+        {selectedFood ? (
+          <Order food={selectedFood} />
+        ) : (
+          <Typography>No data available</Typography>
+        )}
       </Paper>
     </div>
   );

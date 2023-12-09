@@ -8,8 +8,10 @@ import { fetchItemsByListId } from "../api/food";
 import Breakfast from "../components/Breakfast";
 
 const BreakfastScreen = () => {
+  
   const navigate = useNavigate();
   const userId = useSelector((state) => state.auth.userId);
+  
   const { listId, mealName } = useParams();
 
   const { isFetching, error, data } = useQuery({
@@ -18,9 +20,10 @@ const BreakfastScreen = () => {
     onError: (err) => console.error("Erro na query:", err),
   });
 
-  const handleCardPress = (breakfast) => {
-    navigate(`/food/${breakfast.name}/${breakfast.id}`);
-  };
+  const handleCardPress = (food) => {
+    console.log("FOOD BRAKFAST", food)
+    navigate(`/Order/${food.id}`);
+  };  
 
   const handleGoBack = () => {
     navigate(-1); // Voltar uma página no histórico
@@ -48,7 +51,8 @@ const BreakfastScreen = () => {
   if (!isFetching) {
     return (
       <Box>
-      <AppBar position="static" color="primary">
+        
+      <AppBar position="static" sx={styles.header}>
         <Toolbar>
           <IconButton
             edge="start"
@@ -64,7 +68,7 @@ const BreakfastScreen = () => {
         </Toolbar>
       </AppBar>
 
-      <Box>
+      <Box sx={styles.contentContainer}>
         {data.map((item) => (
           <Breakfast key={item.id} breakfast={item} onPress={handleCardPress} />
         ))}
@@ -95,8 +99,8 @@ const styles = {
     width: '100%',
     backgroundColor: '#C0AA4D',
     display: 'flex',
-    alignItems: 'center',
-    height: 80,
+    // alignItems: 'center',
+    // height: 80,
   },
   backButton: {
     borderRadius: '50%',
@@ -111,6 +115,17 @@ const styles = {
   },
   mealContainer: {
     marginTop: 2
+  },
+  container: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+  },
+  contentContainer: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    marginTop: 2,
   },
 };
 
