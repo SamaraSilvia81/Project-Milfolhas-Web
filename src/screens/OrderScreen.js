@@ -13,7 +13,8 @@ const OrderScreen = () => {
   const navigate = useNavigate();
   const userId = useSelector((state) => state.auth.userId);
 
-  const { foodId } = useParams();
+  const { foodName, foodId } = useParams();
+
   console.log("order screen", foodId)
 
   const { isLoading, error, data } = useQuery({
@@ -22,20 +23,12 @@ const OrderScreen = () => {
     onError: (err) => console.error('Erro na query:', err),
   });  
 
-  //   const handleCardPress = (food) => {
-//     const serializedFood = JSON.stringify(food);
-//     navigate(`/Order/${encodeURIComponent(serializedFood)}`);
-//   };
-
   const [selectedFood, setSelectedFood] = useState();
 
-  // No componente OrderScreen
   useEffect(() => {
-    console.log("Data:", data);
     if (data && data.length > 0) {
-      const food = data.find((item) => item.id === foodId);
-      console.log("Selected Food:", food);
-      setSelectedFood(food);
+        const food = data.find((item) => item.id === foodId);
+        setSelectedFood(food);
     }
   }, [data, foodId]);
 
@@ -60,8 +53,6 @@ const OrderScreen = () => {
     );
   }
 
-  // console.log("SELECTED ORDER: ", selectedFood)
-
   return (
     <div style={styles.container}>
       <AppBar position="static" style={styles.appBar}>
@@ -69,7 +60,7 @@ const OrderScreen = () => {
           <IconButton edge="start" color="inherit" onClick={handleGoBack}>
             <ArrowBackIcon />
           </IconButton>
-          <Typography variant="h6">Order</Typography>
+          <Typography variant="h6">Order: {foodName} </Typography>
         </Toolbar>
       </AppBar>
       <Paper elevation={3} style={styles.paper}>

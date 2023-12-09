@@ -2,6 +2,9 @@ import React, { useState } from 'react';
 import { Avatar, Button, Typography } from '@mui/material';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import { useNavigate, useParams } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import { useQuery } from "@tanstack/react-query";
+import { fetchItemsByListId } from "../api/food";
 
 const Order = () => {
   
@@ -9,8 +12,24 @@ const Order = () => {
   const [counter, setCounter] = useState(0);
   const navigate = useNavigate();
 
-  const { foodId } = useParams();
-  console.log("ORDER COMIDA", foodId)
+  const userId = useSelector((state) => state.auth.userId);
+  const { foodName, foodId } = useParams();
+
+  console.log("ORDER ID COMIDA", foodId)
+
+  const { isLoading, error, data, isFetching } = useQuery({
+    queryKey: ['AppTotem', userId],
+    queryFn: () => fetchItemsByListId(userId, foodId),
+    onError: (err) => console.error('Erro na query:', err),
+    staleTime: 10000,
+  });    
+
+  console.log("Data:", data);
+  const price = data?.find((item) => item.id === foodId)?.value || 0;
+  console.log("Price:", price);
+
+  const image = data?.find((item) => item.id === foodId)?.image;
+  console.log("Imagem:", image)
 
   const handleCardPress = () => {
     
@@ -18,8 +37,8 @@ const Order = () => {
 
     const selectedFood = {
       id: foodId.id,
-      foodname: foodId.name,
-      value: foodId.value,
+      foodname: foodName,
+      value: price,
       image: foodId.image,
       quantity: counter,
     };
@@ -37,33 +56,40 @@ const Order = () => {
     }
   };
 
+  if (isLoading) {
+    return <p>Loading...</p>;
+  }
+
   return (
-    <div style={styles.container}>
-      <div style={styles.card}>
-        <div style={styles.content}>
-          <div style={styles.avatarContainer}>
-            <Avatar alt="Food Image" src={foodId.image} sx={{ width: 220, height: 220 }} />
+    <div>
+
+    {isFetching && <p>IS FETCHING</p>}
+
+      <div>
+        <div>
+          <div>
+            <Avatar alt="Food Image" src={image} sx={{ width: 220, height: 220 }} />
           </div>
-          <div style={styles.detailsContainer}>
-            <div style={styles.nameContainer}>
+          <div>
+            <div>
               <Typography variant="h4" sx={styles.name}>
-                {foodId.name}
+                {foodName}
               </Typography>
             </div>
           </div>
-          <div style={styles.tagContainer}>
+          <div>
             <div style={styles.tagItem}>
               <Typography variant="h5" sx={styles.tagText}>
-                Preço: R${foodId.value}
+                Valor: R$ {price}
               </Typography>
             </div>
           </div>
         </div>
-        <div style={styles.order}>
+        <div>
           <Typography variant="h6" sx={styles.text}>
             Quantidade do Pedido
           </Typography>
-          <div style={styles.quantity}>
+          <div>
             <Button variant="contained" sx={styles.minus} onClick={decrement}>
               -
             </Button>
@@ -91,48 +117,10 @@ const Order = () => {
 };
 
 const styles = {
-  container: {
-    flex: 1,
-    padding: 5,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  card: {
-    marginTop: 30,
-  },
-  content: {
-    alignItems: 'center',
-  },
-  avatarContainer: {
-    position: 'absolute',
-    top: -90,
-    right: '60%',
-    alignItems: 'center',
-  },
-  detailsContainer: {
-    marginTop: 120,
-    width: '100%',
-    textAlign: 'justify',
-  },
-  nameContainer: {
-    position: 'absolute',
-    top: -120,
-    left: '60%',
-    width: '50%',
-  },
   name: {
-    fontSize: 20,
     fontWeight: 'bold',
     marginBottom: 5,
     textAlign: 'center',
-  },
-  descriptionContainer: {
-    marginVertical: 50,
-    // Adicione estilo conforme necessário
-  },
-  tagContainer: {
-    flexDirection: 'row',
-    // justifyContent: 'center',
   },
   tagItem: {
     backgroundColor: '#F2F2F2',
@@ -145,49 +133,30 @@ const styles = {
     fontSize: 16,
     textAlign: 'center',
   },
-  lineBottom: {
-    position: 'absolute',
-    bottom: 0,
-    width: '120%',
-    height: 160,
-    backgroundColor: '#23232e',
-    zIndex: -1,
-  },
-  order: {
-    position: 'absolute',
-    top: '116%',
-  },
-  quantity: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    flexDirection: 'row',
-  },
   push: {
-    backgroundColor: 'transparent',
+    // backgroundColor: 'transparent',
   },
   minus: {
-    backgroundColor: 'transparent',
+    // backgroundColor: 'transparent',
   },
   text: {
-    textAlign: 'center',
-    color: '#fff',
-    marginBottom: 15,
+    // textAlign: 'center',
+    // color: '#fff',
+    // marginBottom: 15,
   },
   result: {
-    textAlign: 'center',
-    color: '#fff',
-    marginTop: 10,
-    marginHorizontal: 10,
+    // textAlign: 'center',
+    // color: '#fff',
+    // marginTop: 10,
+    // marginHorizontal: 10,
   },
   actions: {
-    position: 'absolute',
     top: '100%',
-    right: -50,
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 40,
-    width: 80,
-    height: 80,
+    width: 60,
+    height: 60,
     boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.25)',
   },
   button: {

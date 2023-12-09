@@ -35,14 +35,14 @@ function App() {
 					path="/Breakfast/:listId/:mealName"
 					element={<BreakfastScreen />}
 				/>
-				{/* <Route
-					path="/Food/:breakfastName/:breakfastId"
-					element={<FoodScreen />}
-				/> */}
 				<Route
-					path="/Order/:foodId"
+					path="/Order/:foodName/:foodId"
 					element={<OrderScreen />}
 				/>
+				{/* <Route
+					path="/Order/:foodId"
+					element={<OrderScreen />}
+				/> */}
 				<Route
 					path="/Confirm/:selectedFood"
 					element={<ConfirmScreen />}

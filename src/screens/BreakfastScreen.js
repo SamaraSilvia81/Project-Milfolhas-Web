@@ -22,7 +22,8 @@ const BreakfastScreen = () => {
 
   const handleCardPress = (food) => {
     console.log("FOOD BRAKFAST", food)
-    navigate(`/Order/${food.id}`);
+    // navigate(`/Order/${food.id}`);
+    navigate(`/Order/${food.name}/${food.id}`)
   };  
 
   const handleGoBack = () => {

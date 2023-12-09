@@ -8,8 +8,8 @@ const Breakfast = ({ breakfast, onPress }) => {
   };
 
   return (
-    <Card sx={{ width: '250px', margin: '10px' }}>
-      <CardMedia component="img" alt={breakfast.name} height="140" image={breakfast.image} />
+    <Card sx={{ width: '300px', margin: '10px' }}>
+      <CardMedia component="img" alt={breakfast.name} height="200" image={breakfast.image} />
       <CardContent>
         <Typography variant="h5" component="div" sx={{ marginBottom: '10px' }}>
           {breakfast.name}

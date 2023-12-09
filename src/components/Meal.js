@@ -11,7 +11,7 @@ const Meal = ({ meal, onPress }) => {
 
   return (
     <Card sx={{ maxWidth: 345, margin: '10px', cursor: 'pointer' }} onClick={handlePress}>
-      <CardMedia component="img" alt={meal.name} height="140" image={imageUrl} />
+      <CardMedia component="img" alt={meal.name} height="200" image={imageUrl} />
       <CardContent>
         <Typography variant="h5" component="div" sx={{ marginBottom: '10px' }}>
           {meal.name}
