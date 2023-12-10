@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, Container, CssBaseline, Typography, Box } from '@mui/material';
+import { Button, Container, CssBaseline, Box } from '@mui/material';
 import { Link } from 'react-router-dom';
 
 import logo from '../assets/logo.png'; // Importe sua imagem corretamente

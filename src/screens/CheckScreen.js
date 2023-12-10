@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Button,Container,Typography} from '@mui/material';
+import { Box, Button, Container, Typography } from '@mui/material';
 
 import CssBaseline from '@mui/material/CssBaseline';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
@@ -7,13 +7,14 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 
+import logo from '../assets/logo.png'; // Importe sua imagem corretamente
+
 // TODO remove, this demo shouldn't need to reset the theme.
 const defaultTheme = createTheme();
 
 const CheckScreen = () => {
-
+  
   const navigate = useNavigate();
-
   const clientName = useSelector((state) => state.confirm.clientName);
   const cartTotal = useSelector((state) => state.cart.cartTotal);
 
@@ -24,35 +25,40 @@ const CheckScreen = () => {
           display: 'flex',
           flexDirection: 'column',
           minHeight: '100vh',
+          justifyContent: 'center', // Centraliza o conteúdo verticalmente
         }}
       >
         <CssBaseline />
-        <Container component="main" sx={{ mt: 8, mb: 2 }} maxWidth="sm">
-          <Typography variant="h2" component="h1" gutterBottom>
-            Fedido Finalizado com Sucesso !!!
-          </Typography>
-          <Typography variant="h5" component="h2" gutterBottom>
-            Cliente: {clientName}
-          </Typography>
-          <Typography variant="h5" component="h2" gutterBottom>
-            Valor total: R$ {cartTotal}
-          </Typography>
 
-          <Button
-            variant="contained"
-            sx={{
-              ...styles.fakeButton,
-              '&:hover': {
-                backgroundColor: '#A08837', // Cor diferente para o hover
-              },
-            }}
-            onClick={() => navigate('/Hero')}
-          >
-            Finalizar
-          </Button>
-
+        <Container component="main" sx={{ mt: 11, mb: 2, display: 'flex', justifyContent: 'space-between' }} maxWidth="md">
+          <Box width="500px">
+            <Typography variant="h2" component="h1" gutterBottom>
+              Pedido Finalizado com Sucesso !!!
+            </Typography>
+            <Typography variant="h5" component="h2" gutterBottom>
+              Cliente: {clientName}
+            </Typography>
+            <Typography variant="h5" component="h2">
+              Valor total: <span style={{ fontWeight: 'bold' }}>R$ {cartTotal}</span>
+            </Typography>
+            
+            <Button
+              variant="contained"
+              sx={{
+                ...styles.fakeButton,
+                alignSelf: 'flex-end', // Alinha o botão à extremidade inferior do contêiner
+                '&:hover': {
+                  backgroundColor: '#A08837', // Cor diferente para o hover
+                },
+              }}
+              onClick={() => navigate('/Hero')}
+            >
+              Finalizar
+            </Button>
+          </Box>
+          <img src={logo} alt="Logo" style={{ maxWidth: '300px', margin:'5%' }} />
         </Container>
-      
+
         <Box
           component="footer"
           sx={{
@@ -62,7 +68,7 @@ const CheckScreen = () => {
             backgroundColor: '#2a2419',
           }}
         >
-          <Container maxWidth="sm">
+          <Container maxWidth="md">
             <Typography variant="body1" style={styles.footer}>
               Mil Folhas | Totem de Atendimento
             </Typography>
@@ -71,40 +77,18 @@ const CheckScreen = () => {
       </Box>
     </ThemeProvider>
   );
-}
+};
 
 const styles = {
-  container: {
-    display: 'flex',
-    flexDirection: 'column',
-    height: '100vh',
-  },
-  content: {
-    padding: '2rem',
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'center',
-    alignItems: 'center',
-    flex: 1,
-  },
-  appBar: {
-    backgroundColor: '#C0AA4D',
-  },
-  pageTitle: {
-    fontSize: 30,
-    marginTop: 10,
-    color: '#000',
-    fontWeight: 'bold',
-  },
   fakeButton: {
     width: '30%',
     borderRadius: 40,
     backgroundColor: '#C0AA4D',
     marginTop: '2rem',
   },
-  footer:{
-    color: '#fff'
-  }
+  footer: {
+    color: '#fff',
+  },
 };
 
 export default CheckScreen;

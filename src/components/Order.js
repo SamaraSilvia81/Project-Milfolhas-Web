@@ -13,8 +13,6 @@ const Order = ({ order }) => {
   const [isAlertOpen, setIsAlertOpen] = useState(false);
 
   const navigate = useNavigate();
-  
-  // Adquira a função dispatch do Redux
   const dispatch = useDispatch();
 
   const increment = () => {
@@ -27,6 +25,7 @@ const Order = ({ order }) => {
     }
   };
     
+  // Adicionar a carrinho
   const handleCardPress = () => {
 
     if (counter === 0) {
@@ -53,6 +52,8 @@ const Order = ({ order }) => {
   };
 
   console.log("My Order: ", order)
+
+  // Total de cada compra
   const price = parseFloat(order.value);
   const total = price * counter;
 

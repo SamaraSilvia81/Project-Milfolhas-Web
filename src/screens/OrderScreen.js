@@ -59,7 +59,7 @@ const styles = {
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
-    backgroundColor: '#fcfcfc',
+    // backgroundColor: '#fcfcfc',
   },
   appBar: {
     backgroundColor: '#2a2419',

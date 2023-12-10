@@ -9,6 +9,9 @@ import { removeFromCart } from "../redux/actions/cartActions";
 import { setClientName } from '../redux/actions/confirmActions'; // Importe a ação correta
 import { clearCart, setCartTotal } from '../redux/actions/cartActions'; // Importe a ação correta
 
+import cartTotal from '../util/cartTotal';
+import printReceipt from '../util/printReceipt';
+
 import Cart from "../components/Cart";
 
 const CartScreen = () => {
@@ -19,20 +22,27 @@ const CartScreen = () => {
   const cartItems = useSelector((state) => state.cart.cartItems);
   const [clientName, setClientNameLocal] = useState('');
 
+  const total = cartTotal(cartItems);
+
   // Finalizar Comprar
   const handleCardPress = () => {
-    const total = calculateTotal();
-    printReceipt();
-    dispatch(clearCart());
-    dispatch(setClientName(clientName));
-    dispatch(setCartTotal(total)); // Dispatch the new action to update cartTotal in Redux store
-    navigate("/Check");
+    if (total == 0 ) {
+      navigate("/Home")
+    } else {
+      printReceipt(clientName, cartItems); // Imprimir comanda
+      dispatch(clearCart()); // Limpar carrinho 
+      dispatch(setClientName(clientName)); // Exibir o nome do cliente
+      dispatch(setCartTotal(total)); // Dispatch the new action to update cartTotal in Redux store
+      navigate("/Check");
+    }
   };
 
+  // Cancelar pedido
   const handleRemoveFromCart = (item) => {
     dispatch(removeFromCart(item.id));
   };
 
+  // Acompanhamentos
   const handleMoreOrderPress = () => {
     navigate('/Home');
   };
@@ -41,54 +51,6 @@ const CartScreen = () => {
     setClientNameLocal(e.target.value); // Atualize o valor do campo de entrada usando o useState local
   };
 
-   // Função para calcular o valor total do carrinho
-   const calculateTotal = () => {
-    return cartItems.reduce((total, item) => {
-      const itemValue = parseFloat(item.value) || 0;
-      const itemQuantity = parseInt(item.quantity) || 0;
-      return total + itemValue * itemQuantity;
-    }, 0);
-  };
-
-  const printReceipt = () => {
-    const printWindow = window.open('', '_blank');
-    
-    if (printWindow) {
-      printWindow.document.write('<html><head><title>Comanda - Mil Folhas</title>');
-      printWindow.document.write('<style>');
-      printWindow.document.write('body { font-family: Arial, sans-serif; }');
-      printWindow.document.write('h1 { color: #2a2419; }');
-      printWindow.document.write('ul { list-style-type: none; padding: 0; }');
-      printWindow.document.write('li { margin-bottom: 8px; }');
-      printWindow.document.write('p strong { font-weight: bold; color: #2a2419; }');
-      printWindow.document.write('.total { color: #2a2419; font-weight: bold; }');
-      printWindow.document.write('</style></head><body>');
-      
-      // Adicione a logo e o nome da empresa
-      printWindow.document.write('<img src="../../public/logo.png" alt="Mil Folhas" style="max-width: 100px;"/>');
-      printWindow.document.write('<h1>Mil Folhas</h1>');
-      
-      // Adicione os detalhes do cliente e pedidos ao corpo do HTML
-      printWindow.document.write('<p><strong>Nome do Cliente:</strong> ' + clientName + '</p>');
-      printWindow.document.write('<h4>Pedidos:</h4>');
-      printWindow.document.write('<ul>');
-  
-      cartItems.forEach(item => {
-        printWindow.document.write('<li>' + item.name + ':' + ' R$ ' + item.value + ' -- ' + item.quantity + '(unid)' + ' = ' + ' R$ ' + (parseInt(item.value) * item.quantity).toFixed(2) + '</li>');
-      });
-      
-      printWindow.document.write('</ul>');
-      printWindow.document.write('<h2 class="total"><strong>Total:</strong> R$ ' + calculateTotal().toFixed(2) + '</h2>');
-      printWindow.document.write('</body></html>');
-      
-      printWindow.document.close(); // Fecha o documento atual
-      printWindow.print(); // Inicia o processo de impressão
-    } else {
-      alert('Não foi possível abrir a janela de impressão. Verifique se as pop-ups estão bloqueadas.');
-    }
-  };
-  
-      
   const handleGoBack = () => {
     navigate(-1);
   };
@@ -133,7 +95,7 @@ const CartScreen = () => {
             }}
           >
             <Typography variant="body1" sx={{ color: '#000' }}>
-              Seu carrinho está vazio.
+              Seu carrinho está vazio !!
             </Typography>
           </Box>
         )}
@@ -183,8 +145,8 @@ const CartScreen = () => {
           </Grid>
 
           <Grid item xs={12} md={6} sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
-            <Typography variant="h6" sx={{ color: '#fff', marginTop: '10px', marginRight: '11%' }}>
-              Valor Total: R$ {calculateTotal().toFixed(2)}
+            <Typography variant="h6" sx={{ color: '#fff', marginTop: '10px', marginRight: '12%' }}>
+              Valor Total: R$ {total.toFixed(2)}
             </Typography>
             <Button
               type="button"
