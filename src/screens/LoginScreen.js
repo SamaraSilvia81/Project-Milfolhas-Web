@@ -44,11 +44,14 @@ const LoginScreen = () => {
 
   return (
     <ThemeProvider theme={defaultTheme}>
-      <Grid container component="main" sx={{ height: '100vh' }}>
+      <Grid container component="main" sx={{ minHeight: '100vh' }}>
+        <CssBaseline />
+
         <Grid item xs={12} sm={8} md={5} component={Box} elevation={6} square>
           <Box
             sx={{
-              my: 22,
+              my: 10,
+              mt: 20,
               mx: 4,
               display: 'flex',
               flexDirection: 'column',
@@ -63,11 +66,11 @@ const LoginScreen = () => {
             <Typography component="h1" variant="h3">
               Totem de Atendimento
             </Typography>
-            <Typography 
-              component="h2" 
-              variant="h5" 
-              mt={1} 
-              mb={3} 
+            <Typography
+              component="h2"
+              variant="h5"
+              mt={1}
+              mb={3}
               style={{ color: '#f90636' }}
             >
               Made by FiveTech
@@ -95,7 +98,7 @@ const LoginScreen = () => {
                 type="button"
                 fullWidth
                 variant="contained"
-                sx={{ mt: 3, mb: 2, height: '40px'}}
+                sx={{ mt: 3, mb: 2, height: '40px' }}
                 style={{ backgroundColor: '#f90636' }}
                 onClick={handleLogin}
               >
@@ -104,7 +107,7 @@ const LoginScreen = () => {
             </Box>
           </Box>
         </Grid>
-        <CssBaseline />
+
         <Grid
           item
           xs={false}
@@ -117,11 +120,13 @@ const LoginScreen = () => {
               t.palette.mode === 'light' ? t.palette.grey[50] : t.palette.grey[900],
             backgroundSize: 'cover',
             backgroundPosition: 'center',
+            minHeight: '100vh', // Adicionando altura mínima para garantir consistência
           }}
         />
+        
       </Grid>
     </ThemeProvider>
   );
-}
+};
 
 export default LoginScreen;

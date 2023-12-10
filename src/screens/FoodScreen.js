@@ -1,68 +1,138 @@
-// import React from 'react';
-// import { Card, CardContent, Typography, Button } from '@mui/material';
-// import { useSelector } from 'react-redux';
-// import { useQuery } from "@tanstack/react-query";
-// import { fetchItemsByListId } from "../api/food";
-// import { useNavigate, useParams } from 'react-router-dom';
+import React, { useState, useEffect } from "react";
+import { Typography, Box, CircularProgress, AppBar, Toolbar, IconButton } from '@mui/material';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import { useParams, useNavigate } from 'react-router-dom';
+import { useQuery } from "@tanstack/react-query";
+import { useSelector } from 'react-redux';
+import { fetchItemsByListId } from "../api/food";
+import Food from "../components/Food";
 
-// const FoodScreen = () => {
+const FoodScreen = () => {
+  
+  const [foodData, setFoodData] = useState([]);
+  
+  const navigate = useNavigate();
+  const userId = useSelector((state) => state.auth.userId);
+  
+  const { listId, mealName } = useParams();
 
-//   const userId = useSelector((state) => state.auth.userId);
-//   const { breakfastName, breakfastId } = useParams();
-//   const navigate = useNavigate();
+  const { isFetching, error, data } = useQuery({
+    queryKey: ["AppTotem", userId],
+    queryFn: () => fetchItemsByListId(userId, listId),
+    onError: (err) => console.error("Erro na query:", err),
+  });
 
-//   const { isLoading, error, data, isFetching } = useQuery({
-//     queryKey: ['AppTotem', userId],
-//     queryFn: () => fetchItemsByListId(userId, breakfastId),
-//     onError: (err) => console.error('Erro na query:', err),
-//     staleTime: 10000,
-//   });
+  const handleCardPress = (food) => {
+    console.log("CONSOLE FOOD", food)
+    navigate(`/Order/${encodeURIComponent(food.name)}/${food.id}`, {
+      state: { foodData: food },
+    });
+  };
 
-//   const handleCardPress = (food) => {
-//     const serializedFood = JSON.stringify(food);
-//     navigate(`/Order/${encodeURIComponent(serializedFood)}`);
-//   };
+  const handleGoBack = () => {
+    navigate(-1);
+  };
 
-//   const handleGoBack = () => {
-//     navigate(-1);
-//   };
+  useEffect(() => {
+    if (data) {
+      setFoodData(data);
+    }
+  }, [data]);;
 
-//   return (
-//     <div style={styles.container}>
-//       {isFetching && <p>IS FETCHING</p>}
+  if (isFetching) {
+    return (
+      <Box sx={styles.loadingContainer}>
+        <CircularProgress size={50} />
+      </Box>
+    );
+  }
 
-//       <Card>
-//         <CardContent>
-//           <Typography variant="h6" style={{ marginBottom: '10px' }}>
-//             {breakfastName}
-//           </Typography>
-//           <Typography variant="body2" color="textSecondary">
-//             {data.find((item) => item.id === breakfastId)?.name}
-//           </Typography>
-//           <Typography variant="body2" color="textSecondary">
-//             Valor: {data.find((item) => item.id === breakfastId)?.value}
-//           </Typography>
-//           <Button
-//             onClick={() => handleCardPress(data.find((item) => item.id === breakfastId))}
-//             variant="contained"
-//             color="primary"
-//           >
-//             Ver Detalhes
-//           </Button>
-//         </CardContent>
-//       </Card>
-//     </div>
-//   );
-// };
+  if (error) {
+    return (
+      <Box sx={styles.errorContainer}>
+        <Typography>Error: {error.message}</Typography>
+      </Box>
+    );
+  }
 
-// const styles = {
-//   container: {
-//     flex: 1,
-//     width: '100%',
-//     justifyContent: 'center',
-//     alignItems: 'center',
-//     backgroundColor: '#fcfcfc',
-//   },
-// };
+  if (!isFetching) {
+    return (
+      <Box>
+        <AppBar position="static" sx={styles.header}>
+          <Toolbar>
+            <IconButton
+              edge="start"
+              color="inherit"
+              onClick={handleGoBack}
+              sx={{ mr: 2 }}
+            >
+              <ArrowBackIcon />
+            </IconButton>
+            <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+              {mealName}
+            </Typography>
+          </Toolbar>
+        </AppBar>
 
-// export default FoodScreen;
+        <Box sx={styles.contentContainer}>
+          {data.map((item) => (
+            <Food key={item.id} food={item} onPress={handleCardPress} />
+          ))}
+        </Box>
+      </Box>
+    );
+  }
+}
+
+const styles = {
+  container: {
+    width: '100%',
+  },
+  loadingContainer: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexDirection: 'column',
+    height: '100vh'
+  },
+  errorContainer: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexDirection: 'column',
+  },
+  header: {
+    width: '100%',
+    backgroundColor: '#C0AA4D',
+    display: 'flex',
+    // alignItems: 'center',
+    // height: 80,
+  },
+  backButton: {
+    borderRadius: '50%',
+    marginRight: 2,
+  },
+  backIcon: {
+    color: '#fff',
+  },
+  title: {
+    color: '#fff',
+    fontWeight: 'bold',
+  },
+  mealContainer: {
+    marginTop: 2
+  },
+  container: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+  },
+  contentContainer: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    marginTop: 2,
+  },
+};
+
+export default FoodScreen;

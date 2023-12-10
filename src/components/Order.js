@@ -1,50 +1,19 @@
-import React, { useState } from 'react';
-import { Avatar, Button, Typography } from '@mui/material';
+import React, {useState, useEffect} from 'react';
+import { Card, CardContent, CardMedia, Typography, Button } from '@mui/material';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
-import { useNavigate, useParams } from 'react-router-dom';
-import { useSelector } from 'react-redux';
-import { useQuery } from "@tanstack/react-query";
-import { fetchItemsByListId } from "../api/food";
+import { useNavigate } from 'react-router-dom';
+import { addToCart } from '../redux/actions/cartActions';
+import { useDispatch } from 'react-redux';
 
-const Order = () => {
-  
+const Order = ({ order }) => {
+
   const [isButtonPressed, setIsButtonPressed] = useState(false);
   const [counter, setCounter] = useState(0);
+
   const navigate = useNavigate();
-
-  const userId = useSelector((state) => state.auth.userId);
-  const { foodName, foodId } = useParams();
-
-  console.log("ORDER ID COMIDA", foodId)
-
-  const { isLoading, error, data, isFetching } = useQuery({
-    queryKey: ['AppTotem', userId],
-    queryFn: () => fetchItemsByListId(userId, foodId),
-    onError: (err) => console.error('Erro na query:', err),
-    staleTime: 10000,
-  });    
-
-  console.log("Data:", data);
-  const price = data?.find((item) => item.id === foodId)?.value || 0;
-  console.log("Price:", price);
-
-  const image = data?.find((item) => item.id === foodId)?.image;
-  console.log("Imagem:", image)
-
-  const handleCardPress = () => {
-    
-    setIsButtonPressed((prevState) => !prevState);
-
-    const selectedFood = {
-      id: foodId.id,
-      foodname: foodName,
-      value: price,
-      image: foodId.image,
-      quantity: counter,
-    };
-
-    navigate('Confirm', { selectedFood });
-  };
+  
+  // Adquira a função dispatch do Redux
+  const dispatch = useDispatch();
 
   const increment = () => {
     setCounter(counter + 1);
@@ -55,64 +24,86 @@ const Order = () => {
       setCounter(counter - 1);
     }
   };
+    
+  const handleCardPress = () => {
 
-  if (isLoading) {
-    return <p>Loading...</p>;
-  }
+    if (counter === 0) {
+      alert("É preciso inserir uma quantidade ou cancele.");
+      return;
+    }
+  
+    const orderData = {
+      id: order.id,
+      name: order.name,
+      image: order.image,
+      value: order.value,
+      quantity: counter,
+      total: total,
+    };
+    setIsButtonPressed(true);
+
+    // Utilize a função dispatch para despachar a ação addToCart
+    dispatch(addToCart(orderData));
+   
+    navigate(`/Confirm/${encodeURIComponent(JSON.stringify(orderData))}`);
+  };
+
+  console.log("My Order: ", order)
+  const price = parseFloat(order.value);
+  const total = price * counter;
 
   return (
-    <div>
+    <Card style={{ width: '400px', marginTop:"30px"}}>
+      <CardMedia component="img" alt={order.name} height="200" image={order.image} />
+      <CardContent>
 
-    {isFetching && <p>IS FETCHING</p>}
+        <Typography style={{ fontSize: 30, marginBottom: '2px', color: '#333' }}>
+          {order.name}
+        </Typography>
+        <Typography variant="h5" color="textSecondary">
+          R$ {order.value}
+        </Typography>
 
-      <div>
-        <div>
-          <div>
-            <Avatar alt="Food Image" src={image} sx={{ width: 220, height: 220 }} />
-          </div>
-          <div>
-            <div>
-              <Typography variant="h4" sx={styles.name}>
-                {foodName}
-              </Typography>
-            </div>
-          </div>
-          <div>
-            <div style={styles.tagItem}>
-              <Typography variant="h5" sx={styles.tagText}>
-                Valor: R$ {price}
-              </Typography>
-            </div>
-          </div>
-        </div>
-        <div>
-          <Typography variant="h6" sx={styles.text}>
-            Quantidade do Pedido
+        <div style={styles.tagItem}>
+          <Button variant="contained" sx={styles.minus} onClick={decrement}>
+            -
+          </Button>
+          <Typography variant="h6" sx={styles.result}>
+            {counter}
           </Typography>
-          <div>
-            <Button variant="contained" sx={styles.minus} onClick={decrement}>
-              -
-            </Button>
-            <Typography variant="h6" sx={styles.result}>
-              {counter}
-            </Typography>
-            <Button variant="contained" sx={styles.push} onClick={increment}>
-              +
-            </Button>
-          </div>
+          <Button variant="contained" sx={styles.push} onClick={increment}>
+            +
+          </Button>
         </div>
-        <div style={styles.actions}>
+
+        <Typography sx={styles.tagText} variant="h6">
+          Valor Total
+        </Typography>
+        <Typography sx={styles.tagPrice} variant="h5">
+          R$ {total}
+        </Typography>
+
+        <div style={{ display: 'flex', justifyContent: 'center', marginTop: '30px' }}>
           <Button
             variant="contained"
             sx={[styles.button, isButtonPressed && styles.buttonPressed]}
             onClick={handleCardPress}
           >
-            <ShoppingCartIcon style={{ fontSize: 20, color: 'white' }} />
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
+              <div style={{ display: 'flex', alignItems: 'center' }}>
+                <ShoppingCartIcon style={{ fontSize: 25, color: 'white' }} />
+                <div style={{ width: '4px' }}></div> {/* Espaço entre o ícone e o texto */}
+                <div style={{ width: '1px', height: '20px', backgroundColor: 'white' }}></div>
+              </div>
+              <Typography variant="h6" sx={{ fontSize: 15, fontWeight: 'bold' }}>
+                Adicionar ao Carrinho
+              </Typography>
+            </div>
           </Button>
         </div>
-      </div>
-      <div style={styles.lineBottom} />
-    </div>
+        
+      </CardContent>
+    </Card>
   );
 };
 
@@ -123,32 +114,46 @@ const styles = {
     textAlign: 'center',
   },
   tagItem: {
-    backgroundColor: '#F2F2F2',
-    borderRadius: 20,
-    paddingHorizontal: 20,
-    paddingVertical: 15,
-    marginHorizontal: 5,
+    display: 'flex', 
+    alignItems: 'center', 
+    justifyContent: 'center',
+    backgroundColor:'#f2f2f2',
+    padding: '15px 0',
+    marginTop: '25px',
   },
   tagText: {
-    fontSize: 16,
+    marginTop: 3,
+    textAlign: 'center' 
+  },
+  tagPrice:{
+    marginTop: 1,
     textAlign: 'center',
+    fontWeight: 'bold',
   },
   push: {
-    // backgroundColor: 'transparent',
+    minWidth: 35,
+    minHeight: 35,
+    borderRadius: '50%', // Use '50%' for a circular shape
+    padding: 0, // Remova o preenchimento padrão
+    justifyContent: 'center',
+    backgroundColor: '#C0AA4D',
   },
   minus: {
-    // backgroundColor: 'transparent',
+    minWidth: 35,
+    minHeight: 35,
+    borderRadius: '50%', // Use '50%' for a circular shape
+    padding: 0, // Remova o preenchimento padrão
+    justifyContent: 'center',
+    backgroundColor: '#C0AA4D',
   },
   text: {
-    // textAlign: 'center',
-    // color: '#fff',
-    // marginBottom: 15,
+    textAlign: 'center',
+    color: '#fff',
+    marginBottom: 15,
   },
   result: {
-    // textAlign: 'center',
-    // color: '#fff',
-    // marginTop: 10,
-    // marginHorizontal: 10,
+    textAlign: 'center',
+    margin: '0 5%',
   },
   actions: {
     top: '100%',
@@ -160,15 +165,15 @@ const styles = {
     boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.25)',
   },
   button: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
+    width: '70%',
+    height: 45,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#C0AA4D',
-  },
-  buttonPressed: {
     backgroundColor: '#2A234B',
+    transition: 'background-color 0.3s ease', // Adiciona uma transição suave
+    '&:hover': {
+      backgroundColor: '#3D3566', // Cor desejada no hover
+    },
   },
 };
 

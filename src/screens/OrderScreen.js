@@ -1,75 +1,55 @@
-import React, { useEffect, useState } from 'react';
-import { CircularProgress, IconButton, Paper, Typography, AppBar, Toolbar } from '@mui/material';
+import React, {useState, useEffect} from 'react';
+import { IconButton, Paper, Typography, AppBar, Toolbar } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import { useSelector } from 'react-redux';
-import { useQuery } from '@tanstack/react-query';
-import { useParams, useNavigate } from 'react-router-dom';
 
-import Order from '../components/Order';
-import { fetchItemsByListId } from '../api/food';
+import { useSelector } from 'react-redux';
+import { useQuery } from "@tanstack/react-query";
+import { fetchItemsByListId } from "../api/food";
+import { useNavigate, useParams, useLocation } from 'react-router-dom';
+
+import Order from "../components/Order";
 
 const OrderScreen = () => {
-  
-  const navigate = useNavigate();
+
+  const [foodData, setFoodData] = useState([]);
+
   const userId = useSelector((state) => state.auth.userId);
+  const { orderName, orderId } = useParams(); // Use `useParams` para obter parâmetros da URL
 
-  const { foodName, foodId } = useParams();
+  const navigate = useNavigate();
+  const location = useLocation(); // Utilize useLocation para acessar o estado passado
 
-  console.log("order screen", foodId)
-
-  const { isLoading, error, data } = useQuery({
-    queryKey: ['AppTotem', userId],  // Adicione foodId aqui
-    queryFn: () => fetchItemsByListId(userId, foodId),
+  const { isLoading, error, data, isFetching } = useQuery({
+    queryKey: ['AppTotem', userId],
+    queryFn: () => fetchItemsByListId(userId, orderId),
     onError: (err) => console.error('Erro na query:', err),
-  });  
+    staleTime: 10000,
+  });
 
-  const [selectedFood, setSelectedFood] = useState();
-
+  const order = location.state.foodData;
+  
   useEffect(() => {
-    if (data && data.length > 0) {
-        const food = data.find((item) => item.id === foodId);
-        setSelectedFood(food);
+    if (data) {
+      setFoodData(data);
     }
-  }, [data, foodId]);
-
+  }, [data]);;
+  
   const handleGoBack = () => {
     navigate(-1);
   };
 
-  if (isLoading) {
-    return (
-      <div style={styles.loadingContainer}>
-        <CircularProgress size={50} />
-        <Typography>Loading</Typography>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div style={styles.errorContainer}>
-        <Typography>Error: {error.message}</Typography>
-      </div>
-    );
-  }
-
   return (
     <div style={styles.container}>
+      {isFetching && <p>IS FETCHING</p>}
       <AppBar position="static" style={styles.appBar}>
         <Toolbar>
           <IconButton edge="start" color="inherit" onClick={handleGoBack}>
             <ArrowBackIcon />
           </IconButton>
-          <Typography variant="h6">Order: {foodName} </Typography>
+          <Typography variant="h6">Order: {orderName}</Typography>
         </Toolbar>
       </AppBar>
-      <Paper elevation={3} style={styles.paper}>
-        {selectedFood ? (
-          <Order food={selectedFood} />
-        ) : (
-          <Typography>No data available</Typography>
-        )}
-      </Paper>
+      {data && data.length > 0 && <Order order={order} />}
     </div>
   );
 };
@@ -80,14 +60,9 @@ const styles = {
     flexDirection: 'column',
     alignItems: 'center',
     backgroundColor: '#fcfcfc',
-    minHeight: '100vh',
   },
   appBar: {
     backgroundColor: '#C0AA4D',
-  },
-  paper: {
-    padding: '30px',
-    marginTop: '20px',
   },
   loadingContainer: {
     display: 'flex',

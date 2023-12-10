@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import { Box, CircularProgress, IconButton, Paper, Typography, AppBar, Toolbar } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { useQuery } from '@tanstack/react-query';
@@ -8,13 +8,18 @@ import Confirm from '../components/Confirm';
 import { fetchItemsByListId } from '../api/food';
 
 const ConfirmScreen = () => {
-  const navigate = useNavigate();
 
-  const { selectedFood } = useParams();
-  const serializedFood = decodeURIComponent(selectedFood);
-  const food = JSON.parse(serializedFood);
-
+  const [foodData, setFoodData] = useState([]);
   const userId = useSelector((state) => state.auth.userId);
+  
+  const navigate = useNavigate();
+  const { selectedFood } = useParams();
+
+  console.log("SELECTED FOOD", selectedFood);
+
+  // Decodifique os dados aqui, pois você os codificou antes de passá-los na URL
+  const decodedSelectedFood = JSON.parse(decodeURIComponent(selectedFood));
+  console.log("DECODED SELECTED FOOD", decodedSelectedFood);
 
   const handleGoBack = () => {
     navigate(-1);
@@ -22,9 +27,15 @@ const ConfirmScreen = () => {
 
   const { isLoading, error, data } = useQuery({
     queryKey: ["AppTotem", userId],
-    queryFn: () => fetchItemsByListId(userId, food.list_id),
+    queryFn: () => fetchItemsByListId(userId, decodedSelectedFood.id),
     onError: (err) => console.error("Erro na query:", err),
   });
+
+  useEffect(() => {
+    if (data) {
+      setFoodData(data);
+    }
+  }, [data]);;
 
   if (isLoading) {
     return (
@@ -43,7 +54,7 @@ const ConfirmScreen = () => {
     );
   }
 
-  if (!selectedFood) {
+  if (!decodedSelectedFood) {
     return (
       <Box style={styles.errorContainer}>
         <Typography>No food found</Typography>
@@ -61,9 +72,7 @@ const ConfirmScreen = () => {
           <Typography variant="h6">Confirm</Typography>
         </Toolbar>
       </AppBar>
-      <Paper elevation={3} style={styles.paper}>
-        <Confirm food={food} />
-      </Paper>
+      <Confirm food={decodedSelectedFood} />
     </Box>
   );
 };
@@ -78,10 +87,6 @@ const styles = {
   },
   appBar: {
     backgroundColor: '#C0AA4D',
-  },
-  paper: {
-    padding: '30px',
-    marginTop: '20px',
   },
   loadingContainer: {
     display: 'flex',

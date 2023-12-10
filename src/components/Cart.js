@@ -1,26 +1,29 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardMedia, Typography, Button } from '@mui/material';
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 
-const Food = ({ food, onPress }) => {
+const Cart = ({ cart, onPress }) => {
 
-  console.log("SELECTED FOOD", food)
+  const [, forceUpdate] = useState(); // Cria um estado local para forçar a atualização
 
-  const handlePress = () => {
-    onPress(food);
+  const handleDeleteCartPress = () => {
+    onPress(cart);
+    // Força a atualização da página
+    forceUpdate((prev) => !prev);
   };
 
   return (
     <Card sx={{ width: '300px', margin: '10px' }}>
-      <CardMedia component="img" alt={food.name} height="200" image={food.image} />
+      <CardMedia component="img" alt={cart.name} height="200" image={cart.image} />
       <CardContent>
         <Typography variant="h5" component="div" sx={{ marginBottom: '10px' }}>
-          {food.name}
+          {cart.name}
         </Typography>
         <Typography variant="h6" color="textSecondary">
-          Valor: {food.value}
+          R$ {cart.value} {`(${cart.quantity} und)`}
         </Typography>
         <Button
-          onClick={handlePress}
+          onClick={handleDeleteCartPress}
           variant="contained"
           sx={{
             backgroundColor: '#C0AA4D',
@@ -32,11 +35,12 @@ const Food = ({ food, onPress }) => {
             marginLeft: 7,
           }}
         >
-          Comprar
+          <DeleteOutlineIcon />
+          Deletar
         </Button>
       </CardContent>
     </Card>
   );
 };
 
-export default Food;
+export default Cart;

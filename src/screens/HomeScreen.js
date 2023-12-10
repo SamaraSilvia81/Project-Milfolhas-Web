@@ -19,7 +19,7 @@ function HomeScreen() {
   });
 
   const handleCardPress = (meal) => {
-    navigate(`/Breakfast/${meal.id}/${meal.name}`);
+    navigate(`/Food/${meal.id}/${meal.name}`);
   };
 
   const handleGoBack = () => {

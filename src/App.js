@@ -8,12 +8,11 @@ import {
 import LoginScreen from './screens/LoginScreen';
 import HeroScreen from './screens/HeroScreen';
 import HomeScreen from './screens/HomeScreen';
-import BreakfastScreen from './screens/BreakfastScreen';
 import FoodScreen from './screens/FoodScreen';
 import OrderScreen from './screens/OrderScreen';
 import ConfirmScreen from './screens/ConfirmScreen';
+import CartScreen from './screens/CartScreen';
 import CheckScreen from './screens/CheckScreen';
-import FakeScreen from './screens/FakeScreen';
 
 function App() {
 	return (
@@ -32,28 +31,24 @@ function App() {
 					element={<HomeScreen />}
 				/>
 				<Route
-					path="/Breakfast/:listId/:mealName"
-					element={<BreakfastScreen />}
+					path="/Food/:listId/:mealName"
+					element={<FoodScreen />}
 				/>
 				<Route
-					path="/Order/:foodName/:foodId"
+					path="/Order/:orderName/:orderId"
 					element={<OrderScreen />}
 				/>
-				{/* <Route
-					path="/Order/:foodId"
-					element={<OrderScreen />}
-				/> */}
 				<Route
 					path="/Confirm/:selectedFood"
 					element={<ConfirmScreen />}
 				/>
 				<Route
-					path="/Check"
-					element={<CheckScreen />}
+					path="/Cart"
+					element={<CartScreen/>}
 				/>
 				<Route
-					path="/Fake"
-					element={<FakeScreen />}
+					path="/Check"
+					element={<CheckScreen />}
 				/>
 			</Routes>
 		</Router>

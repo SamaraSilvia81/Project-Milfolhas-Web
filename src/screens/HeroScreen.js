@@ -26,7 +26,13 @@ function HeroScreen() {
             <Button
               fullWidth
               variant="contained"
-              sx={{ backgroundColor: "#BEAD64" }}
+              sx={{
+                backgroundColor: '#C0AA4D',
+                '&:hover': {
+                  backgroundColor: '#A8953A',
+                },
+                width: '150px',
+              }}
               component={Link}
               to="/Home"
             >

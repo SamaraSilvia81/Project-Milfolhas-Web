@@ -1,130 +1,130 @@
-import React, { useState } from 'react';
-import { Box, Button, Typography } from '@mui/material';
-import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import { useNavigate, useParams } from 'react-router-dom';
+// Confirm.jsx
+import React from 'react';
+import { Box, Button, Card, CardContent, CardMedia, Typography } from '@mui/material';
+
+import { useDispatch, useSelector} from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+
+import { clearCart } from '../redux/actions/cartActions'; // Importe a ação correta para limpar o carrinho
 
 const Confirm = ({ food }) => {
-  const [isButtonPressed, setIsButtonPressed] = useState(false);
+
+  const cartItems = useSelector((state) => state.cart.cartItems);
+
+  const dispatch = useDispatch();
   const navigate = useNavigate();
 
+  const handleMoreOrderPress = () => {
+    navigate('/Home')
+  }
+
+  console.log("MEU CARRINHO", cartItems)
+
   const handleCardPress = () => {
-    setIsButtonPressed((prevState) => !prevState);
-    navigate('/Fake');
+    navigate('/Cart');
+  };
+
+  const handleCancelOrder = () => {
+    dispatch(clearCart()); // Dispatch a ação para limpar o carrinho
+    console.log("LIMPEI MEU CARRINHO")
+    navigate('/Home');
   };
 
   return (
-    <Box sx={styles.container}>
-      <Box sx={styles.card}>
-        <Box sx={styles.content}>
-          <Box sx={styles.avatarContainer}>
-            <img src={food.image} alt="Food Image" style={styles.image} />
-          </Box>
-          <Box sx={styles.detailsOrder}>
-            <Typography variant="h5" sx={styles.quantity}>
-              Quantidade: {food.quantity}
-            </Typography>
-            <Typography variant="h5" sx={styles.name}>
-              Prato: {food.name}
-            </Typography>
-          </Box>
+    <div>
+      <Card style={{ width: '500px', marginTop: '30px' }}>
+        <CardMedia component="img" alt={food.name} height="200" image={food.image} />
+
+        <CardContent>
+
+          <Typography style={{ fontSize: 30, marginBottom: '2px', color: '#333' }}>
+            {food.name}
+          </Typography>
+          <Typography variant="h5" color="textSecondary">
+            R$ {food.value}
+          </Typography>
+
           <Box sx={styles.tagContainer}>
             <Typography variant="h5" sx={styles.tagText}>
-              Preço: R$ {parseInt(food.value) * food.quantity}
+              Preço Total: R$ {food.total}
             </Typography>
           </Box>
-        </Box>
-        <Box sx={styles.actionsContainer}>
-          <Button variant="contained" sx={styles.confirm} onClick={handleCardPress}>
-            Confirmar Pedido
-          </Button>
-          <Button
-            variant="contained"
-            sx={styles.cancel}
-            onClick={() => navigate('/Home')}
-          >
-            Cancelar Pedido
-          </Button>
-        </Box>
+
+          <Box sx={styles.actionsContainer}>
+            <Button variant="contained" sx={styles.cancel} onClick={handleCancelOrder}>
+              Cancelar Pedido
+            </Button>
+            <Button variant="contained" sx={styles.confirm} onClick={handleCardPress}>
+              Confirmar Pedido
+            </Button>
+          </Box>
+        </CardContent>
+      </Card>
+
+      {/* Background Box with Text and Button */}
+      <Box
+        sx={{
+          backgroundColor: '#23232a',
+          textAlign: 'center',
+          padding: '20px',
+          marginTop: '20px',
+        }}
+      >
+        <Typography variant="body1" sx={{ color: '#fff', marginTop: '10px' }}>
+          Deseja adicionar algo mais?
+        </Typography>
+        <Button
+          type="button"
+          fullWidth
+          variant="contained"
+          sx={{
+            mt: 3,
+            mb: 2,
+            width: '40%',
+            height: '40px',
+            backgroundColor: '#f90636',
+            '&:hover': {
+              backgroundColor: '#e60032', // Cor diferente para o hover
+            },
+          }}
+          onClick={handleMoreOrderPress}
+        >
+          Acompanhamentos
+        </Button>
       </Box>
-      <Box sx={styles.lineBottom} />
-    </Box>
+    </div>
   );
 };
 
 const styles = {
-  container: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    backgroundColor: '#fcfcfc',
-    minHeight: '100vh',
-  },
   card: {
-    marginTop: 15,
-    position: 'relative',
-    width: 320,
-  },
-  content: {
-    alignItems: 'center',
-    padding: '20px',
-  },
-  avatarContainer: {
-    marginBottom: 5,
-  },
-  image: {
     width: 350,
-    height: 250,
-  },
-  detailsOrder: {
-    marginTop: 20,
   },
   name: {
-    fontSize: 20,
-    fontWeight: 'bold',
-  },
-  quantity: {
-    fontSize: 20,
-    marginBottom: 20,
+    margin: '5px 0',
   },
   tagContainer: {
-    flexDirection: 'row',
     justifyContent: 'center',
     backgroundColor: '#F2F2F2',
     borderRadius: 20,
-    padding: '15px 20px',
-    margin: '0 5px',
+    width: '60%',
+    padding: '15px 20px', // Adjusted padding
+    margin: '25px auto', // Centered the container horizontally
   },
   tagText: {
     fontSize: 16,
     textAlign: 'center',
   },
-  lineBottom: {
-    position: 'absolute',
-    bottom: 0,
-    width: '100%',
-    height: 160,
-    backgroundColor: '#23232e',
-    zIndex: -1,
-  },
   actionsContainer: {
     display: 'flex',
-    justifyContent: 'space-between',
-    position: 'absolute',
-    top: '115%',
-    left: 0,
-    right: 0,
-    padding: '0 20px',
+    justifyContent: 'center', // Center the buttons
+    marginTop: '20px',
   },
   confirm: {
-    flex: 1,
-    marginRight: '10px',
-    borderRadius: 40,
+    marginLeft: '10px',
     backgroundColor: '#C0AA4D',
   },
   cancel: {
-    flex: 1,
-    borderRadius: 40,
     backgroundColor: '#2A234B',
   },
 };
