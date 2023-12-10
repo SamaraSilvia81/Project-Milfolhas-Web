@@ -64,7 +64,7 @@ const Confirm = ({ food }) => {
       {/* Background Box with Text and Button */}
       <Box
         sx={{
-          backgroundColor: '#23232a',
+          backgroundColor: '#2a2419',
           textAlign: 'center',
           padding: '20px',
           marginTop: '20px',
@@ -82,9 +82,9 @@ const Confirm = ({ food }) => {
             mb: 2,
             width: '40%',
             height: '40px',
-            backgroundColor: '#f90636',
+            backgroundColor: '#C0AA4D',
             '&:hover': {
-              backgroundColor: '#e60032', // Cor diferente para o hover
+              backgroundColor: '#A8953A', // Cor diferente para o hover
             },
           }}
           onClick={handleMoreOrderPress}
@@ -123,9 +123,17 @@ const styles = {
   confirm: {
     marginLeft: '10px',
     backgroundColor: '#C0AA4D',
+    transition: 'background-color 0.3s ease', // Adiciona uma transição suave
+    '&:hover': {
+      backgroundColor: '#A8953A', // Cor desejada no hover
+    },
   },
   cancel: {
-    backgroundColor: '#2A234B',
+    backgroundColor: '#4e432d',
+    transition: 'background-color 0.3s ease', // Adiciona uma transição suave
+    '&:hover': {
+      backgroundColor: '#9c8559', // Cor desejada no hover
+    },
   },
 };
 

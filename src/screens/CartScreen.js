@@ -7,7 +7,7 @@ import { useDispatch, useSelector } from "react-redux";
 
 import { removeFromCart } from "../redux/actions/cartActions";
 import { setClientName } from '../redux/actions/confirmActions'; // Importe a ação correta
-import { setCartTotal } from '../redux/actions/cartActions'; // Importe a ação correta
+import { clearCart, setCartTotal } from '../redux/actions/cartActions'; // Importe a ação correta
 
 import Cart from "../components/Cart";
 
@@ -19,9 +19,12 @@ const CartScreen = () => {
   const cartItems = useSelector((state) => state.cart.cartItems);
   const [clientName, setClientNameLocal] = useState('');
 
+  // Finalizar Comprar
   const handleCardPress = () => {
-    dispatch(setClientName(clientName));
     const total = calculateTotal();
+    printReceipt();
+    dispatch(clearCart());
+    dispatch(setClientName(clientName));
     dispatch(setCartTotal(total)); // Dispatch the new action to update cartTotal in Redux store
     navigate("/Check");
   };
@@ -38,7 +41,6 @@ const CartScreen = () => {
     setClientNameLocal(e.target.value); // Atualize o valor do campo de entrada usando o useState local
   };
 
-
    // Função para calcular o valor total do carrinho
    const calculateTotal = () => {
     return cartItems.reduce((total, item) => {
@@ -48,6 +50,45 @@ const CartScreen = () => {
     }, 0);
   };
 
+  const printReceipt = () => {
+    const printWindow = window.open('', '_blank');
+    
+    if (printWindow) {
+      printWindow.document.write('<html><head><title>Comanda - Mil Folhas</title>');
+      printWindow.document.write('<style>');
+      printWindow.document.write('body { font-family: Arial, sans-serif; }');
+      printWindow.document.write('h1 { color: #2a2419; }');
+      printWindow.document.write('ul { list-style-type: none; padding: 0; }');
+      printWindow.document.write('li { margin-bottom: 8px; }');
+      printWindow.document.write('p strong { font-weight: bold; color: #2a2419; }');
+      printWindow.document.write('.total { color: #2a2419; font-weight: bold; }');
+      printWindow.document.write('</style></head><body>');
+      
+      // Adicione a logo e o nome da empresa
+      printWindow.document.write('<img src="../../public/logo.png" alt="Mil Folhas" style="max-width: 100px;"/>');
+      printWindow.document.write('<h1>Mil Folhas</h1>');
+      
+      // Adicione os detalhes do cliente e pedidos ao corpo do HTML
+      printWindow.document.write('<p><strong>Nome do Cliente:</strong> ' + clientName + '</p>');
+      printWindow.document.write('<h4>Pedidos:</h4>');
+      printWindow.document.write('<ul>');
+  
+      cartItems.forEach(item => {
+        printWindow.document.write('<li>' + item.name + ':' + ' R$ ' + item.value + ' -- ' + item.quantity + '(unid)' + ' = ' + ' R$ ' + (parseInt(item.value) * item.quantity).toFixed(2) + '</li>');
+      });
+      
+      printWindow.document.write('</ul>');
+      printWindow.document.write('<h2 class="total"><strong>Total:</strong> R$ ' + calculateTotal().toFixed(2) + '</h2>');
+      printWindow.document.write('</body></html>');
+      
+      printWindow.document.close(); // Fecha o documento atual
+      printWindow.print(); // Inicia o processo de impressão
+    } else {
+      alert('Não foi possível abrir a janela de impressão. Verifique se as pop-ups estão bloqueadas.');
+    }
+  };
+  
+      
   const handleGoBack = () => {
     navigate(-1);
   };
@@ -110,7 +151,7 @@ const CartScreen = () => {
 
       <Box
         sx={{
-          backgroundColor: '#23232a',
+          backgroundColor: '#2a2419',
           textAlign: 'center',
           padding: '20px',
           marginTop: '20px',
@@ -130,9 +171,9 @@ const CartScreen = () => {
                 mb: 2,
                 width: '40%',
                 height: '40px',
-                backgroundColor: '#f90636',
+                backgroundColor: '#C0AA4D',
                 '&:hover': {
-                  backgroundColor: '#e60032',
+                  backgroundColor: '#A8953A',
                 },
               }}
               onClick={handleMoreOrderPress}
@@ -154,9 +195,9 @@ const CartScreen = () => {
                 mb: 2,
                 width: '40%',
                 height: '40px',
-                backgroundColor: '#483c80',
+                backgroundColor: '#9c8559',
                 '&:hover': {
-                  backgroundColor: '#3c326b',
+                  backgroundColor: '#4e432d',
                 },
               }}
               onClick={handleCardPress}
@@ -174,7 +215,7 @@ const CartScreen = () => {
 const styles = {
   header: {
     width: "100%",
-    backgroundColor: "#C0AA4D",
+    backgroundColor: "#2a2419",
   },
 };
 

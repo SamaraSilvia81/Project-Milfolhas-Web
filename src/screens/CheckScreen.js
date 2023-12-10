@@ -59,7 +59,7 @@ const CheckScreen = () => {
             py: 3,
             px: 2,
             mt: 'auto',
-            backgroundColor: '#23232e',
+            backgroundColor: '#2a2419',
           }}
         >
           <Container maxWidth="sm">

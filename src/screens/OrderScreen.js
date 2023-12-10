@@ -46,7 +46,7 @@ const OrderScreen = () => {
           <IconButton edge="start" color="inherit" onClick={handleGoBack}>
             <ArrowBackIcon />
           </IconButton>
-          <Typography variant="h6">Order: {orderName}</Typography>
+          <Typography variant="h6">Pedido: {orderName}</Typography>
         </Toolbar>
       </AppBar>
       {data && data.length > 0 && <Order order={order} />}
@@ -62,7 +62,7 @@ const styles = {
     backgroundColor: '#fcfcfc',
   },
   appBar: {
-    backgroundColor: '#C0AA4D',
+    backgroundColor: '#2a2419',
   },
   loadingContainer: {
     display: 'flex',

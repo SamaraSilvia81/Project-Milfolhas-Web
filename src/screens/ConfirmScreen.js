@@ -69,7 +69,7 @@ const ConfirmScreen = () => {
           <IconButton edge="start" color="inherit" onClick={handleGoBack}>
             <ArrowBackIcon />
           </IconButton>
-          <Typography variant="h6">Confirm</Typography>
+          <Typography variant="h6">Confirmar Pedido</Typography>
         </Toolbar>
       </AppBar>
       <Confirm food={decodedSelectedFood} />
@@ -86,7 +86,7 @@ const styles = {
     minHeight: '100vh',
   },
   appBar: {
-    backgroundColor: '#C0AA4D',
+    backgroundColor: '#2a2419',
   },
   loadingContainer: {
     display: 'flex',

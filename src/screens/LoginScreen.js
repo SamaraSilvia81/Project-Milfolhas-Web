@@ -71,7 +71,7 @@ const LoginScreen = () => {
               variant="h5"
               mt={1}
               mb={3}
-              style={{ color: '#f90636' }}
+              style={{ color: '#eca400' }}
             >
               Made by FiveTech
             </Typography>
@@ -99,7 +99,7 @@ const LoginScreen = () => {
                 fullWidth
                 variant="contained"
                 sx={{ mt: 3, mb: 2, height: '40px' }}
-                style={{ backgroundColor: '#f90636' }}
+                style={{ backgroundColor: '#2a2419' }}
                 onClick={handleLogin}
               >
                 Entrar

@@ -4,11 +4,13 @@ import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import { useNavigate } from 'react-router-dom';
 import { addToCart } from '../redux/actions/cartActions';
 import { useDispatch } from 'react-redux';
+import CustomAlert from '../util/CustomAlert'; // Substitua o caminho correto para o componente
 
 const Order = ({ order }) => {
 
   const [isButtonPressed, setIsButtonPressed] = useState(false);
   const [counter, setCounter] = useState(0);
+  const [isAlertOpen, setIsAlertOpen] = useState(false);
 
   const navigate = useNavigate();
   
@@ -28,7 +30,7 @@ const Order = ({ order }) => {
   const handleCardPress = () => {
 
     if (counter === 0) {
-      alert("É preciso inserir uma quantidade ou cancele.");
+      setIsAlertOpen(true);
       return;
     }
   
@@ -40,7 +42,9 @@ const Order = ({ order }) => {
       quantity: counter,
       total: total,
     };
+   
     setIsButtonPressed(true);
+    setIsAlertOpen(false);
 
     // Utilize a função dispatch para despachar a ação addToCart
     dispatch(addToCart(orderData));
@@ -54,6 +58,13 @@ const Order = ({ order }) => {
 
   return (
     <Card style={{ width: '400px', marginTop:"30px"}}>
+
+      {isAlertOpen && (
+        <CustomAlert onClose={() => setIsAlertOpen(false)}>
+          É preciso inserir uma quantidade !!
+        </CustomAlert>
+      )}
+
       <CardMedia component="img" alt={order.name} height="200" image={order.image} />
       <CardContent>
 
@@ -136,7 +147,11 @@ const styles = {
     borderRadius: '50%', // Use '50%' for a circular shape
     padding: 0, // Remova o preenchimento padrão
     justifyContent: 'center',
-    backgroundColor: '#C0AA4D',
+    backgroundColor: '#C0AA4D', 
+    transition: 'background-color 0.3s ease', // Adiciona uma transição suave
+    '&:hover': {
+      backgroundColor: '#A8953A', // Cor desejada no hover
+    },
   },
   minus: {
     minWidth: 35,
@@ -145,6 +160,10 @@ const styles = {
     padding: 0, // Remova o preenchimento padrão
     justifyContent: 'center',
     backgroundColor: '#C0AA4D',
+    transition: 'background-color 0.3s ease', // Adiciona uma transição suave
+    '&:hover': {
+      backgroundColor: '#A8953A', // Cor desejada no hover
+    },
   },
   text: {
     textAlign: 'center',
@@ -169,10 +188,10 @@ const styles = {
     height: 45,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#2A234B',
+    backgroundColor: '#4e432d',
     transition: 'background-color 0.3s ease', // Adiciona uma transição suave
     '&:hover': {
-      backgroundColor: '#3D3566', // Cor desejada no hover
+      backgroundColor: '#9c8559', // Cor desejada no hover
     },
   },
 };

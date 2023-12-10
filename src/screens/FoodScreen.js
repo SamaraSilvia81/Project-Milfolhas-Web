@@ -103,7 +103,7 @@ const styles = {
   },
   header: {
     width: '100%',
-    backgroundColor: '#C0AA4D',
+    backgroundColor: '#2a2419',
     display: 'flex',
     // alignItems: 'center',
     // height: 80,
