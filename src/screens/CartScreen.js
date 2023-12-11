@@ -2,8 +2,6 @@ import React, {useState} from "react";
 import { Button, Typography, Box, AppBar, Toolbar, IconButton, Grid, TextField } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
-import axios from 'axios'; // Importe o Axios
-
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -11,6 +9,7 @@ import { removeFromCart } from "../redux/actions/cartActions";
 import { setClientName } from '../redux/actions/confirmActions'; // Importe a ação correta
 import { clearCart, setCartTotal } from '../redux/actions/cartActions'; // Importe a ação correta
 
+import printReceipt from '../util/printReceipt'; // Substitua 'caminho-do-arquivo' pelo caminho correto
 import cartTotal from "../util/cartTotal";
 
 import Cart from "../components/Cart";
@@ -27,127 +26,24 @@ const CartScreen = () => {
 
   // Finalizar Comprar
   
-  // const handleCardPress = async () => {
-  //   try {
-  //     if (total === 0) {
-  //       navigate("/Home");
-  //     } else {
-  //       const response = await fetch('http://localhost:3001/imprimir', {
-  //         method: 'POST',
-  //         headers: {
-  //           'Content-Type': 'application/json',
-  //         },
-  //         body: JSON.stringify({
-  //           clientName,
-  //           cartItems,
-  //           total,
-  //         }),
-  //       });
-  
-  //       if (!response.ok) {
-  //         throw new Error(`Erro na solicitação: ${response.status} - ${response.statusText}`);
-  //       }
-  
-  //       const data = await response.json();
-  //       console.log('Resposta do servidor:', data);
-  
-  //       dispatch(clearCart());
-  //       dispatch(setClientName(clientName));
-  //       dispatch(setCartTotal(total));
-  
-  //       navigate("/Check");
-  //     }
-  //   } catch (error) {
-  //     console.error('Erro na solicitação:', error);
-  //   }
-  // };  
-  
-  // const handleCardPress = async () => {
-
-  //   console.log('Antes da solicitação HTTP');
-  
-  //   try {
-  //     console.log('Enviando solicitação HTTP para:', 'http://localhost:3001/imprimir');
-  //     console.log('Dados a serem enviados:', {
-  //       clientName,
-  //       cartItems,
-  //       total,
-  //     });
-  
-  //     const response = await axios.post(
-  //       'http://localhost:3001/imprimir',
-  //       {
-  //         clientName,
-  //         cartItems,
-  //         total,
-  //       },
-  //       {
-  //         maxContentLength: Infinity,
-  //         maxBodyLength: Infinity,
-  //       }
-  //     );
-  
-  //     // Verifique a resposta do servidor
-  //     console.log('Resposta do servidor:', response.data);
-  
-  //     dispatch(clearCart());
-  //     dispatch(setClientName(clientName));
-  //     dispatch(setCartTotal(total));
-  
-  //     navigate('/Check');
-  //   } catch (error) {
-  //     console.error('Erro na solicitação:', error.message);
-  //   }
-  // };
-
   const handleCardPress = async () => {
-    console.log('Antes da solicitação HTTP');
-  
     try {
-      console.log('Enviando solicitação HTTP para:', 'http://localhost:3001/imprimir');
-      console.log('Dados a serem enviados:', {
-        clientName,
-        cartItems,
-        total,
-      });
-  
-      const response = await axios.post(
-        'http://localhost:3001/imprimir',
-        {
-          clientName,
-          cartItems,
-          total,
-        },
-        {
-          maxContentLength: Infinity,
-          maxBodyLength: Infinity,
-        }
-      );
-  
-      // Verifique a resposta do servidor
-      console.log('Resposta do servidor:', response.data);
-  
-      // A partir daqui, você pode manipular os dados da resposta conforme necessário
-      const { success, jobID, error } = response.data;
-  
-      if (success) {
-        // Os dados foram impressos com sucesso
+      if (total === 0) {
+        navigate("/Home");
+      } else {
+
+        await printReceipt(clientName, cartItems);
+        
         dispatch(clearCart());
         dispatch(setClientName(clientName));
         dispatch(setCartTotal(total));
-        navigate('/Check');
-      } else {
-        // Houve um erro ao imprimir
-        console.error('Erro ao imprimir:', error);
-        // Adicione lógica para lidar com o erro no frontend, se necessário
+       
+        navigate("/Check");
       }
     } catch (error) {
-      console.error('Erro na solicitação:', error.message);
-      // Adicione lógica para lidar com erros de solicitação, se necessário
+      console.error('Erro na solicitação:', error);
     }
-  };
-  
-  
+  };  
 
   // Cancelar pedido
   const handleRemoveFromCart = (item) => {

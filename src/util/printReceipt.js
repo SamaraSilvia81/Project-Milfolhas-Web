@@ -1,44 +1,33 @@
-import jsPDF from 'jspdf';
+const printReceipt = (clientName, cartItems) => {
 
-const printReceipt = async (clientName, cartItems) => {
-  return new Promise((resolve, reject) => {
-    const pdf = new jsPDF({
-      orientation: 'portrait',
-      unit: 'mm',
-      format: 'a5',
-    });
+  const printWindow = window.open('', '_blank');
+  const content = `
+    <html>
+      <head>
+        <title>Recibo de Compra</title>
+      </head>
+      <body>
+        <h1>Recibo - Mil Folhas</h1>
+        <h2>Nome do Cliente: ${clientName}</h2>
+        <h3>Pedidos:</h3>
+        <ul>
+          ${cartItems.map(item => `
+            <li>
+              ${item.name}: R$ ${item.value} -- ${item.quantity}(unid) = R$ ${(parseInt(item.value) * item.quantity).toFixed(2)}
+            </li>`).join('')}
+        </ul>
+        <p>Total: R$ ${cartItems.reduce((acc, item) => acc + (item.value * item.quantity), 0).toFixed(2)}</p>
+      </body>
+    </html>
+  `;
 
-    pdf.text('Nome do Cliente: ' + clientName, 20, 20);
-    pdf.text('Pedidos:', 20, 30);
+  printWindow.document.write(content);
+  printWindow.document.close();
 
-    let yPosition = 40;
-
-    cartItems.forEach(item => {
-      pdf.text(
-        item.name + ': R$ ' + item.value + ' -- ' + item.quantity + '(unid) = R$ ' + (parseInt(item.value) * item.quantity).toFixed(2),
-        20,
-        yPosition
-      );
-      yPosition += 10;
-    });
-
-    const total = cartItems.reduce((acc, item) => acc + item.total, 0);
-    pdf.text('Total: R$ ' + total.toFixed(2), 20, yPosition + 10);
-
-    // Verificar se ipcRenderer está disponível (significa que estamos no Electron)
-    if (window.ipcRenderer) {
-      window.ipcRenderer.send('print', { pdfData: pdf.output('datauristring') });
-
-      window.ipcRenderer.once('print-complete', () => {
-        console.log('Impressão concluída');
-        resolve();
-      });
-    } else {
-      // Lógica de impressão para navegador (pode ser um redirecionamento para uma página de impressão)
-      console.log('Imprimir no navegador');
-      resolve();
-    }
-  });
+  printWindow.print();
+  printWindow.onafterprint = () => {
+    printWindow.close();
+  };
 };
 
 export default printReceipt;
