@@ -8,7 +8,7 @@ const printReceipt = (clientName, cartItems) => {
       </head>
       <body>
         <h1>Recibo - Mil Folhas</h1>
-        <h2>Nome do Cliente: ${clientName}</h2>
+        <h3>Nome do Cliente: ${clientName}</h3>
         <h3>Pedidos:</h3>
         <ul>
           ${cartItems.map(item => `
@@ -16,7 +16,7 @@ const printReceipt = (clientName, cartItems) => {
               ${item.name}: R$ ${item.value} -- ${item.quantity}(unid) = R$ ${(parseInt(item.value) * item.quantity).toFixed(2)}
             </li>`).join('')}
         </ul>
-        <p>Total: R$ ${cartItems.reduce((acc, item) => acc + (item.value * item.quantity), 0).toFixed(2)}</p>
+        <h2>Total: R$ ${cartItems.reduce((acc, item) => acc + (item.total),0).toFixed(2)}</h2>
       </body>
     </html>
   `;
