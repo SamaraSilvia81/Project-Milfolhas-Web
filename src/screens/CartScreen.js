@@ -2,6 +2,8 @@ import React, {useState} from "react";
 import { Button, Typography, Box, AppBar, Toolbar, IconButton, Grid, TextField } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
+import axios from 'axios'; // Importe o Axios
+
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -9,8 +11,7 @@ import { removeFromCart } from "../redux/actions/cartActions";
 import { setClientName } from '../redux/actions/confirmActions'; // Importe a ação correta
 import { clearCart, setCartTotal } from '../redux/actions/cartActions'; // Importe a ação correta
 
-import cartTotal from '../util/cartTotal';
-import printReceipt from '../util/printReceipt';
+import cartTotal from "../util/cartTotal";
 
 import Cart from "../components/Cart";
 
@@ -25,17 +26,128 @@ const CartScreen = () => {
   const total = cartTotal(cartItems);
 
   // Finalizar Comprar
-  const handleCardPress = () => {
-    if (total == 0 ) {
-      navigate("/Home")
-    } else {
-      printReceipt(clientName, cartItems); // Imprimir comanda
-      dispatch(clearCart()); // Limpar carrinho 
-      dispatch(setClientName(clientName)); // Exibir o nome do cliente
-      dispatch(setCartTotal(total)); // Dispatch the new action to update cartTotal in Redux store
-      navigate("/Check");
+  
+  // const handleCardPress = async () => {
+  //   try {
+  //     if (total === 0) {
+  //       navigate("/Home");
+  //     } else {
+  //       const response = await fetch('http://localhost:3001/imprimir', {
+  //         method: 'POST',
+  //         headers: {
+  //           'Content-Type': 'application/json',
+  //         },
+  //         body: JSON.stringify({
+  //           clientName,
+  //           cartItems,
+  //           total,
+  //         }),
+  //       });
+  
+  //       if (!response.ok) {
+  //         throw new Error(`Erro na solicitação: ${response.status} - ${response.statusText}`);
+  //       }
+  
+  //       const data = await response.json();
+  //       console.log('Resposta do servidor:', data);
+  
+  //       dispatch(clearCart());
+  //       dispatch(setClientName(clientName));
+  //       dispatch(setCartTotal(total));
+  
+  //       navigate("/Check");
+  //     }
+  //   } catch (error) {
+  //     console.error('Erro na solicitação:', error);
+  //   }
+  // };  
+  
+  // const handleCardPress = async () => {
+
+  //   console.log('Antes da solicitação HTTP');
+  
+  //   try {
+  //     console.log('Enviando solicitação HTTP para:', 'http://localhost:3001/imprimir');
+  //     console.log('Dados a serem enviados:', {
+  //       clientName,
+  //       cartItems,
+  //       total,
+  //     });
+  
+  //     const response = await axios.post(
+  //       'http://localhost:3001/imprimir',
+  //       {
+  //         clientName,
+  //         cartItems,
+  //         total,
+  //       },
+  //       {
+  //         maxContentLength: Infinity,
+  //         maxBodyLength: Infinity,
+  //       }
+  //     );
+  
+  //     // Verifique a resposta do servidor
+  //     console.log('Resposta do servidor:', response.data);
+  
+  //     dispatch(clearCart());
+  //     dispatch(setClientName(clientName));
+  //     dispatch(setCartTotal(total));
+  
+  //     navigate('/Check');
+  //   } catch (error) {
+  //     console.error('Erro na solicitação:', error.message);
+  //   }
+  // };
+
+  const handleCardPress = async () => {
+    console.log('Antes da solicitação HTTP');
+  
+    try {
+      console.log('Enviando solicitação HTTP para:', 'http://localhost:3001/imprimir');
+      console.log('Dados a serem enviados:', {
+        clientName,
+        cartItems,
+        total,
+      });
+  
+      const response = await axios.post(
+        'http://localhost:3001/imprimir',
+        {
+          clientName,
+          cartItems,
+          total,
+        },
+        {
+          maxContentLength: Infinity,
+          maxBodyLength: Infinity,
+        }
+      );
+  
+      // Verifique a resposta do servidor
+      console.log('Resposta do servidor:', response.data);
+  
+      // A partir daqui, você pode manipular os dados da resposta conforme necessário
+      const { success, jobID, error } = response.data;
+  
+      if (success) {
+        // Os dados foram impressos com sucesso
+        dispatch(clearCart());
+        dispatch(setClientName(clientName));
+        dispatch(setCartTotal(total));
+        navigate('/Check');
+      } else {
+        // Houve um erro ao imprimir
+        console.error('Erro ao imprimir:', error);
+        // Adicione lógica para lidar com o erro no frontend, se necessário
+      }
+    } catch (error) {
+      console.error('Erro na solicitação:', error.message);
+      // Adicione lógica para lidar com erros de solicitação, se necessário
     }
   };
+  
+  
 
   // Cancelar pedido
   const handleRemoveFromCart = (item) => {
@@ -57,6 +169,7 @@ const CartScreen = () => {
 
   return (
     <Box>
+      
       <AppBar position="static" sx={styles.header}>
         <Toolbar>
           <IconButton edge="start" color="inherit" onClick={handleGoBack} sx={{ mr: 2 }}>
@@ -145,7 +258,7 @@ const CartScreen = () => {
           </Grid>
 
           <Grid item xs={12} md={6} sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
-            <Typography variant="h6" sx={{ color: '#fff', marginTop: '10px', marginRight: '12%' }}>
+            <Typography variant="h6" sx={{ color: '#fff', marginTop: '10px', marginRight: '10%' }}>
               Valor Total: R$ {total.toFixed(2)}
             </Typography>
             <Button

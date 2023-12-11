@@ -1,44 +1,44 @@
-const printReceipt = (clientName, cartItems) => {
+import jsPDF from 'jspdf';
 
-    const printWindow = window.open('', '_blank');
-    
-    if (printWindow) {
-      
-      printWindow.document.write('<html><head><title>Comanda - Mil Folhas</title>');
-      printWindow.document.write('<style>');
-      printWindow.document.write('body { font-family: Arial, sans-serif; }');
-      printWindow.document.write('h1 { color: #2a2419; }');
-      printWindow.document.write('ul { list-style-type: none; padding: 0; }');
-      printWindow.document.write('li { margin-bottom: 8px; }');
+const printReceipt = async (clientName, cartItems) => {
+  return new Promise((resolve, reject) => {
+    const pdf = new jsPDF({
+      orientation: 'portrait',
+      unit: 'mm',
+      format: 'a5',
+    });
 
-      printWindow.document.write('p strong { font-weight: bold; color: #2a2419; }');
-      printWindow.document.write('.total { color: #2a2419; font-weight: bold; }');
-      printWindow.document.write('</style></head><body>');
-      
-      // Adicione a logo e o nome da empresa
-      printWindow.document.write('<img src="../assets/logo.png" alt="Mil Folhas" style="max-width: 100px;"/>');
-      printWindow.document.write('<h1>Mil Folhas</h1>');
-      
-      // Adicione os detalhes do cliente e pedidos ao corpo do HTML
-      printWindow.document.write('<p><strong>Nome do Cliente:</strong> ' + clientName + '</p>');
-      printWindow.document.write('<h4>Pedidos:</h4>');
-      printWindow.document.write('<ul>');
-  
-      cartItems.forEach(item => {
-        printWindow.document.write('<li>' + item.name + ':' + ' R$ ' + item.value + ' -- ' + item.quantity + '(unid)' + ' = ' + ' R$ ' + (parseInt(item.value) * item.quantity).toFixed(2) + '</li>');
+    pdf.text('Nome do Cliente: ' + clientName, 20, 20);
+    pdf.text('Pedidos:', 20, 30);
+
+    let yPosition = 40;
+
+    cartItems.forEach(item => {
+      pdf.text(
+        item.name + ': R$ ' + item.value + ' -- ' + item.quantity + '(unid) = R$ ' + (parseInt(item.value) * item.quantity).toFixed(2),
+        20,
+        yPosition
+      );
+      yPosition += 10;
+    });
+
+    const total = cartItems.reduce((acc, item) => acc + item.total, 0);
+    pdf.text('Total: R$ ' + total.toFixed(2), 20, yPosition + 10);
+
+    // Verificar se ipcRenderer está disponível (significa que estamos no Electron)
+    if (window.ipcRenderer) {
+      window.ipcRenderer.send('print', { pdfData: pdf.output('datauristring') });
+
+      window.ipcRenderer.once('print-complete', () => {
+        console.log('Impressão concluída');
+        resolve();
       });
-      
-      printWindow.document.write('</ul>');
-      cartItems.forEach(item => {
-        printWindow.document.write('<h2 class="total"><strong>Total:</strong> R$ ' + item.total.toFixed(2) + '</h2>');
-      })
-      printWindow.document.write('</body></html>');
-      
-      printWindow.document.close(); // Fecha o documento atual
-      printWindow.print(); // Inicia o processo de impressão
     } else {
-      alert('Não foi possível abrir a janela de impressão. Verifique se as pop-ups estão bloqueadas.');
+      // Lógica de impressão para navegador (pode ser um redirecionamento para uma página de impressão)
+      console.log('Imprimir no navegador');
+      resolve();
     }
-  };
+  });
+};
 
 export default printReceipt;
